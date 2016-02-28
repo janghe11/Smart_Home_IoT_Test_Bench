@@ -1,0 +1,28 @@
+* 실습 및 사용 가능
+- Step Motor : DC12V, 1.8도
+- Dot Matrix LED : 32 x 16 (3 color)
+- Toggle Switch x4, Push Switch x4 ,16진수 입력 Rotary Switch x2 (LED x8)
+- Keypad : 4x4 텍트 스위치 (다이나믹 구동)
+- Text LCD (16x2 Lines)
+- 7 segment x4
+- SOUND : 압전 부저 5v, 스피커 8옴
+- Clock generator NE555 x1
+- Serial EEPROM 24LC32, 93LC66
+
+* 사용 가능하다고 되어 있는 나머지 제품 스펙 (실습은 안해봄)
+- Graphic LCD (128x64Dots)
+- DC Motor +12V / Input Sensor - Photo Interrupt
+- LED x8, 양방향 LED (5파이) x1
+- 5V 릴레이 x4
+- 센서 : 가변 저랑, CDS, 더미스터, 습도, 인체감지
+- A/D converter
+- 2채널 DA converter AD7302 x1
+- RTC : DS1302 (32.7688KHz)
+- 전압 측정용 레벨 미터 : 10단계(LM3914)
+- 시리얼 실험용 : SIPO(164) x1, PISO(165) x1
+- 디지털 온도계 : DS1620(현재의 상온을 측정)
+- 멜로디 IC : KS537
+- 직렬 포트 : RS-232C(MAX232 x1)
+- IRDA 통신 : 송신(적외선 LED), 수신센서(lslu60)
+- 광통신 송신/수신
+- 음성 인식 모듈(JT1000) : 4단어 이상, 스피커 1개, 마이크 1개

@@ -3,17 +3,17 @@ CD_ATmega8535.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         0000015c  00000000  00000000  00000094  2**1
+  0 .text         000004de  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000010  00800060  0000015c  000001f0  2**0
+  1 .data         00000018  00800060  000004de  00000572  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000003  00800070  00800070  00000200  2**0
+  2 .bss          00000005  00800078  00800078  0000058a  2**0
                   ALLOC
-  3 .stab         00000660  00000000  00000000  00000200  2**2
+  3 .stab         00000f18  00000000  00000000  0000058c  2**2
                   CONTENTS, READONLY, DEBUGGING
-  4 .stabstr      00000bca  00000000  00000000  00000860  2**0
+  4 .stabstr      00000c80  00000000  00000000  000014a4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .comment      00000011  00000000  00000000  0000142a  2**0
+  5 .comment      00000011  00000000  00000000  00002124  2**0
                   CONTENTS, READONLY
 
 Disassembly of section .text:
@@ -53,18 +53,18 @@ Disassembly of section .text:
   36:	10 e0       	ldi	r17, 0x00	; 0
   38:	a0 e6       	ldi	r26, 0x60	; 96
   3a:	b0 e0       	ldi	r27, 0x00	; 0
-  3c:	ec e5       	ldi	r30, 0x5C	; 92
-  3e:	f1 e0       	ldi	r31, 0x01	; 1
+  3c:	ee ed       	ldi	r30, 0xDE	; 222
+  3e:	f4 e0       	ldi	r31, 0x04	; 4
   40:	02 c0       	rjmp	.+4      	; 0x46 <__SREG__+0x7>
   42:	05 90       	lpm	r0, Z+
   44:	0d 92       	st	X+, r0
-  46:	a0 37       	cpi	r26, 0x70	; 112
+  46:	a8 37       	cpi	r26, 0x78	; 120
   48:	b1 07       	cpc	r27, r17
   4a:	d9 f7       	brne	.-10     	; 0x42 <__SREG__+0x3>
 
 0000004c <__do_clear_bss>:
   4c:	20 e0       	ldi	r18, 0x00	; 0
-  4e:	a0 e7       	ldi	r26, 0x70	; 112
+  4e:	a8 e7       	ldi	r26, 0x78	; 120
   50:	b0 e0       	ldi	r27, 0x00	; 0
   52:	01 c0       	rjmp	.+2      	; 0x56 <.do_clear_bss_start>
 
@@ -72,194 +72,815 @@ Disassembly of section .text:
   54:	1d 92       	st	X+, r1
 
 00000056 <.do_clear_bss_start>:
-  56:	a3 37       	cpi	r26, 0x73	; 115
+  56:	ad 37       	cpi	r26, 0x7D	; 125
   58:	b2 07       	cpc	r27, r18
   5a:	e1 f7       	brne	.-8      	; 0x54 <.do_clear_bss_loop>
-  5c:	4a d0       	rcall	.+148    	; 0xf2 <main>
-  5e:	7c c0       	rjmp	.+248    	; 0x158 <_exit>
+  5c:	0b d0       	rcall	.+22     	; 0x74 <main>
+  5e:	3d c2       	rjmp	.+1146   	; 0x4da <_exit>
 
 00000060 <__bad_interrupt>:
   60:	cf cf       	rjmp	.-98     	; 0x0 <__vectors>
 
-00000062 <keyScan>:
-unsigned char KCODE[16] = {0x00, 0x04, 0x08, 0x0c, 0x01, 0x05, 0x09, 0x0d,
-		0x02, 0x06, 0x0a, 0x0e, 0x03, 0x07, 0x0b, 0x0f};
-
-// Catch 4x4 Hex Keypad Input
-void keyScan(void)
-{
-  62:	cf 93       	push	r28
-  64:	df 93       	push	r29
-  66:	00 d0       	rcall	.+0      	; 0x68 <keyScan+0x6>
-  68:	1f 92       	push	r1
-  6a:	cd b7       	in	r28, 0x3d	; 61
-  6c:	de b7       	in	r29, 0x3e	; 62
-	unsigned char i, temp, key1;
-	KEY = key1 = 0;
-  6e:	1a 82       	std	Y+2, r1	; 0x02
-  70:	8a 81       	ldd	r24, Y+2	; 0x02
-  72:	80 93 71 00 	sts	0x0071, r24
-	FLAG = 1;
-  76:	81 e0       	ldi	r24, 0x01	; 1
-  78:	80 93 72 00 	sts	0x0072, r24
-	PORTA = 0xfe;
-  7c:	8b e3       	ldi	r24, 0x3B	; 59
-  7e:	90 e0       	ldi	r25, 0x00	; 0
-  80:	2e ef       	ldi	r18, 0xFE	; 254
-  82:	fc 01       	movw	r30, r24
-  84:	20 83       	st	Z, r18
-	asm ("nop");
-  86:	00 00       	nop
-	asm ("nop");
-  88:	00 00       	nop
-	temp = PINA;
-  8a:	89 e3       	ldi	r24, 0x39	; 57
-  8c:	90 e0       	ldi	r25, 0x00	; 0
-  8e:	fc 01       	movw	r30, r24
-  90:	80 81       	ld	r24, Z
-  92:	8b 83       	std	Y+3, r24	; 0x03
-	temp = (temp >> 4) | 0xf0;
-  94:	8b 81       	ldd	r24, Y+3	; 0x03
-  96:	82 95       	swap	r24
-  98:	8f 70       	andi	r24, 0x0F	; 15
-  9a:	80 6f       	ori	r24, 0xF0	; 240
-  9c:	8b 83       	std	Y+3, r24	; 0x03
-	for(i = 0; i < 4; i++)
-  9e:	19 82       	std	Y+1, r1	; 0x01
-  a0:	14 c0       	rjmp	.+40     	; 0xca <keyScan+0x68>
-	{
-		if(!(temp & 0x01))
-  a2:	8b 81       	ldd	r24, Y+3	; 0x03
-  a4:	88 2f       	mov	r24, r24
-  a6:	90 e0       	ldi	r25, 0x00	; 0
-  a8:	81 70       	andi	r24, 0x01	; 1
-  aa:	99 27       	eor	r25, r25
-  ac:	00 97       	sbiw	r24, 0x00	; 0
-  ae:	29 f4       	brne	.+10     	; 0xba <keyScan+0x58>
-		{
-			key1 = KEY;
-  b0:	80 91 71 00 	lds	r24, 0x0071
-  b4:	8a 83       	std	Y+2, r24	; 0x02
-			FLAG = 0;
-  b6:	10 92 72 00 	sts	0x0072, r1
-		}
-		temp >> 1;
-		KEY++;
-  ba:	80 91 71 00 	lds	r24, 0x0071
-  be:	8f 5f       	subi	r24, 0xFF	; 255
-  c0:	80 93 71 00 	sts	0x0071, r24
-	PORTA = 0xfe;
-	asm ("nop");
-	asm ("nop");
-	temp = PINA;
-	temp = (temp >> 4) | 0xf0;
-	for(i = 0; i < 4; i++)
-  c4:	89 81       	ldd	r24, Y+1	; 0x01
-  c6:	8f 5f       	subi	r24, 0xFF	; 255
-  c8:	89 83       	std	Y+1, r24	; 0x01
-  ca:	89 81       	ldd	r24, Y+1	; 0x01
-  cc:	84 30       	cpi	r24, 0x04	; 4
-  ce:	48 f3       	brcs	.-46     	; 0xa2 <keyScan+0x40>
-			FLAG = 0;
-		}
-		temp >> 1;
-		KEY++;
-	}
-	KEY = key1 & 0x0f;
-  d0:	8a 81       	ldd	r24, Y+2	; 0x02
-  d2:	8f 70       	andi	r24, 0x0F	; 15
-  d4:	80 93 71 00 	sts	0x0071, r24
-}
-  d8:	0f 90       	pop	r0
-  da:	0f 90       	pop	r0
-  dc:	0f 90       	pop	r0
-  de:	df 91       	pop	r29
-  e0:	cf 91       	pop	r28
-  e2:	08 95       	ret
-
-000000e4 <valveMotor>:
+00000062 <valveMotor>:
+ */
+/*__flash */unsigned char KCODE[16] = { 0x00, 0x04, 0x08, 0x0c, 0x01, 0x05,
+		0x09, 0x0d, 0x02, 0x06, 0x0a, 0x0e, 0x03, 0x07, 0x0b, 0x0f };
 
 // Rotate Step Motor 180 on/off
-int valveMotor(void)
-{
-  e4:	cf 93       	push	r28
-  e6:	df 93       	push	r29
-  e8:	cd b7       	in	r28, 0x3d	; 61
-  ea:	de b7       	in	r29, 0x3e	; 62
-
+int valveMotor(void) {
+  62:	cf 93       	push	r28
+  64:	df 93       	push	r29
+  66:	cd b7       	in	r28, 0x3d	; 61
+  68:	de b7       	in	r29, 0x3e	; 62
+	return 0;
+  6a:	80 e0       	ldi	r24, 0x00	; 0
+  6c:	90 e0       	ldi	r25, 0x00	; 0
 }
-  ec:	df 91       	pop	r29
-  ee:	cf 91       	pop	r28
-  f0:	08 95       	ret
+  6e:	df 91       	pop	r29
+  70:	cf 91       	pop	r28
+  72:	08 95       	ret
 
-000000f2 <main>:
+00000074 <main>:
 
-int main(void)
-{
-  f2:	cf 93       	push	r28
-  f4:	df 93       	push	r29
-  f6:	cd b7       	in	r28, 0x3d	; 61
-  f8:	de b7       	in	r29, 0x3e	; 62
-	DDRB = 0xff;
-  fa:	87 e3       	ldi	r24, 0x37	; 55
-  fc:	90 e0       	ldi	r25, 0x00	; 0
-  fe:	2f ef       	ldi	r18, 0xFF	; 255
- 100:	fc 01       	movw	r30, r24
- 102:	20 83       	st	Z, r18
-	DDRC = 0xff;
- 104:	84 e3       	ldi	r24, 0x34	; 52
- 106:	90 e0       	ldi	r25, 0x00	; 0
- 108:	2f ef       	ldi	r18, 0xFF	; 255
- 10a:	fc 01       	movw	r30, r24
- 10c:	20 83       	st	Z, r18
+int main(void) {
+  74:	cf 93       	push	r28
+  76:	df 93       	push	r29
+  78:	00 d0       	rcall	.+0      	; 0x7a <main+0x6>
+  7a:	cd b7       	in	r28, 0x3d	; 61
+  7c:	de b7       	in	r29, 0x3e	; 62
+	// 4자리 키를 순서대로 저장하기 위한 변수
+	unsigned int keyRotate = 0;
+  7e:	1a 82       	std	Y+2, r1	; 0x02
+  80:	19 82       	std	Y+1, r1	; 0x01
+	//DISPLAY function for MDA_Multi (Not working in regular ATmega header files.)
+	//L_INIT();
+	//DISPLAY();
+	// Keypad L0 ~ L3 (Input PA7 ~ PA4), C3 ~ C0 (Output PA3 ~ PA0)
 	DDRA = 0x0f;
- 10e:	8a e3       	ldi	r24, 0x3A	; 58
- 110:	90 e0       	ldi	r25, 0x00	; 0
- 112:	2f e0       	ldi	r18, 0x0F	; 15
- 114:	fc 01       	movw	r30, r24
- 116:	20 83       	st	Z, r18
-	PORTC = 0xff;
- 118:	85 e3       	ldi	r24, 0x35	; 53
- 11a:	90 e0       	ldi	r25, 0x00	; 0
- 11c:	2f ef       	ldi	r18, 0xFF	; 255
- 11e:	fc 01       	movw	r30, r24
- 120:	20 83       	st	Z, r18
-	PORTB = 0xff;
- 122:	88 e3       	ldi	r24, 0x38	; 56
- 124:	90 e0       	ldi	r25, 0x00	; 0
- 126:	2f ef       	ldi	r18, 0xFF	; 255
- 128:	fc 01       	movw	r30, r24
- 12a:	20 83       	st	Z, r18
+  82:	8a e3       	ldi	r24, 0x3A	; 58
+  84:	90 e0       	ldi	r25, 0x00	; 0
+  86:	2f e0       	ldi	r18, 0x0F	; 15
+  88:	fc 01       	movw	r30, r24
+  8a:	20 83       	st	Z, r18
 	do {
-		keyScan();
- 12c:	9a df       	rcall	.-204    	; 0x62 <keyScan>
-		if(!(FLAG == 1))
- 12e:	80 91 72 00 	lds	r24, 0x0072
- 132:	81 30       	cpi	r24, 0x01	; 1
- 134:	81 f0       	breq	.+32     	; 0x156 <main+0x64>
-		{
-			KEY2 = KCODE[KEY];
- 136:	80 91 71 00 	lds	r24, 0x0071
- 13a:	88 2f       	mov	r24, r24
- 13c:	90 e0       	ldi	r25, 0x00	; 0
- 13e:	80 5a       	subi	r24, 0xA0	; 160
- 140:	9f 4f       	sbci	r25, 0xFF	; 255
- 142:	fc 01       	movw	r30, r24
- 144:	80 81       	ld	r24, Z
- 146:	80 93 70 00 	sts	0x0070, r24
-			PORTB = 0xef;
- 14a:	88 e3       	ldi	r24, 0x38	; 56
- 14c:	90 e0       	ldi	r25, 0x00	; 0
- 14e:	2f ee       	ldi	r18, 0xEF	; 239
- 150:	fc 01       	movw	r30, r24
- 152:	20 83       	st	Z, r18
+		// a 혹은 e를 검출하기 위해 3번 row 검사
+		keyScan3();
+  8c:	98 d1       	rcall	.+816    	; 0x3be <keyScan3>
+		if (!(FLAG == 1)) {
+  8e:	80 91 7c 00 	lds	r24, 0x007C
+  92:	81 30       	cpi	r24, 0x01	; 1
+  94:	09 f4       	brne	.+2      	; 0x98 <main+0x24>
+  96:	05 c1       	rjmp	.+522    	; 0x2a2 <__stack+0x43>
+			// a를 누르면 비밀번호 입력 대기 화면
+			if (KCODE[KEY] == 0x0a) {
+  98:	80 91 7b 00 	lds	r24, 0x007B
+  9c:	88 2f       	mov	r24, r24
+  9e:	90 e0       	ldi	r25, 0x00	; 0
+  a0:	88 59       	subi	r24, 0x98	; 152
+  a2:	9f 4f       	sbci	r25, 0xFF	; 255
+  a4:	fc 01       	movw	r30, r24
+  a6:	80 81       	ld	r24, Z
+  a8:	8a 30       	cpi	r24, 0x0A	; 10
+  aa:	09 f0       	breq	.+2      	; 0xae <main+0x3a>
+  ac:	8e c0       	rjmp	.+284    	; 0x1ca <main+0x156>
+				KCODE[KEY] = 0;
+  ae:	80 91 7b 00 	lds	r24, 0x007B
+  b2:	88 2f       	mov	r24, r24
+  b4:	90 e0       	ldi	r25, 0x00	; 0
+  b6:	88 59       	subi	r24, 0x98	; 152
+  b8:	9f 4f       	sbci	r25, 0xFF	; 255
+  ba:	fc 01       	movw	r30, r24
+  bc:	10 82       	st	Z, r1
+				keyRotate = 0;
+  be:	1a 82       	std	Y+2, r1	; 0x02
+  c0:	19 82       	std	Y+1, r1	; 0x01
+				// 다시 a를 누르면 입력 종료
+				while (!(KCODE[KEY] == 0x0a) || keyRotate < 4) {
+  c2:	49 c0       	rjmp	.+146    	; 0x156 <main+0xe2>
+					keyScan1();
+  c4:	ef d0       	rcall	.+478    	; 0x2a4 <keyScan1>
+					if (!(FLAG == 1)) {
+  c6:	80 91 7c 00 	lds	r24, 0x007C
+  ca:	81 30       	cpi	r24, 0x01	; 1
+  cc:	51 f0       	breq	.+20     	; 0xe2 <main+0x6e>
+						KEY2 = KCODE[KEY];
+  ce:	80 91 7b 00 	lds	r24, 0x007B
+  d2:	88 2f       	mov	r24, r24
+  d4:	90 e0       	ldi	r25, 0x00	; 0
+  d6:	88 59       	subi	r24, 0x98	; 152
+  d8:	9f 4f       	sbci	r25, 0xFF	; 255
+  da:	fc 01       	movw	r30, r24
+  dc:	80 81       	ld	r24, Z
+  de:	80 93 7a 00 	sts	0x007A, r24
+					}
+
+					keyScan2();
+  e2:	26 d1       	rcall	.+588    	; 0x330 <keyScan2>
+					if (!(FLAG == 1)) {
+  e4:	80 91 7c 00 	lds	r24, 0x007C
+  e8:	81 30       	cpi	r24, 0x01	; 1
+  ea:	51 f0       	breq	.+20     	; 0x100 <main+0x8c>
+						KEY2 = KCODE[KEY];
+  ec:	80 91 7b 00 	lds	r24, 0x007B
+  f0:	88 2f       	mov	r24, r24
+  f2:	90 e0       	ldi	r25, 0x00	; 0
+  f4:	88 59       	subi	r24, 0x98	; 152
+  f6:	9f 4f       	sbci	r25, 0xFF	; 255
+  f8:	fc 01       	movw	r30, r24
+  fa:	80 81       	ld	r24, Z
+  fc:	80 93 7a 00 	sts	0x007A, r24
+					}
+
+					keyScan3();
+ 100:	5e d1       	rcall	.+700    	; 0x3be <keyScan3>
+					if (!(FLAG == 1)) {
+ 102:	80 91 7c 00 	lds	r24, 0x007C
+ 106:	81 30       	cpi	r24, 0x01	; 1
+ 108:	51 f0       	breq	.+20     	; 0x11e <main+0xaa>
+						KEY2 = KCODE[KEY];
+ 10a:	80 91 7b 00 	lds	r24, 0x007B
+ 10e:	88 2f       	mov	r24, r24
+ 110:	90 e0       	ldi	r25, 0x00	; 0
+ 112:	88 59       	subi	r24, 0x98	; 152
+ 114:	9f 4f       	sbci	r25, 0xFF	; 255
+ 116:	fc 01       	movw	r30, r24
+ 118:	80 81       	ld	r24, Z
+ 11a:	80 93 7a 00 	sts	0x007A, r24
+					}
+
+					keyScan4();
+ 11e:	96 d1       	rcall	.+812    	; 0x44c <keyScan4>
+					if (!(FLAG == 1)) {
+ 120:	80 91 7c 00 	lds	r24, 0x007C
+ 124:	81 30       	cpi	r24, 0x01	; 1
+ 126:	51 f0       	breq	.+20     	; 0x13c <main+0xc8>
+						KEY2 = KCODE[KEY];
+ 128:	80 91 7b 00 	lds	r24, 0x007B
+ 12c:	88 2f       	mov	r24, r24
+ 12e:	90 e0       	ldi	r25, 0x00	; 0
+ 130:	88 59       	subi	r24, 0x98	; 152
+ 132:	9f 4f       	sbci	r25, 0xFF	; 255
+ 134:	fc 01       	movw	r30, r24
+ 136:	80 81       	ld	r24, Z
+ 138:	80 93 7a 00 	sts	0x007A, r24
+					}
+
+					inputPassword[keyRotate] = KEY2;
+ 13c:	20 91 7a 00 	lds	r18, 0x007A
+ 140:	89 81       	ldd	r24, Y+1	; 0x01
+ 142:	9a 81       	ldd	r25, Y+2	; 0x02
+ 144:	8c 59       	subi	r24, 0x9C	; 156
+ 146:	9f 4f       	sbci	r25, 0xFF	; 255
+ 148:	fc 01       	movw	r30, r24
+ 14a:	20 83       	st	Z, r18
+					keyRotate++;
+ 14c:	89 81       	ldd	r24, Y+1	; 0x01
+ 14e:	9a 81       	ldd	r25, Y+2	; 0x02
+ 150:	01 96       	adiw	r24, 0x01	; 1
+ 152:	9a 83       	std	Y+2, r25	; 0x02
+ 154:	89 83       	std	Y+1, r24	; 0x01
+			// a를 누르면 비밀번호 입력 대기 화면
+			if (KCODE[KEY] == 0x0a) {
+				KCODE[KEY] = 0;
+				keyRotate = 0;
+				// 다시 a를 누르면 입력 종료
+				while (!(KCODE[KEY] == 0x0a) || keyRotate < 4) {
+ 156:	80 91 7b 00 	lds	r24, 0x007B
+ 15a:	88 2f       	mov	r24, r24
+ 15c:	90 e0       	ldi	r25, 0x00	; 0
+ 15e:	88 59       	subi	r24, 0x98	; 152
+ 160:	9f 4f       	sbci	r25, 0xFF	; 255
+ 162:	fc 01       	movw	r30, r24
+ 164:	80 81       	ld	r24, Z
+ 166:	8a 30       	cpi	r24, 0x0A	; 10
+ 168:	09 f0       	breq	.+2      	; 0x16c <main+0xf8>
+ 16a:	ac cf       	rjmp	.-168    	; 0xc4 <main+0x50>
+ 16c:	89 81       	ldd	r24, Y+1	; 0x01
+ 16e:	9a 81       	ldd	r25, Y+2	; 0x02
+ 170:	84 30       	cpi	r24, 0x04	; 4
+ 172:	91 05       	cpc	r25, r1
+ 174:	08 f4       	brcc	.+2      	; 0x178 <main+0x104>
+ 176:	a6 cf       	rjmp	.-180    	; 0xc4 <main+0x50>
+
+					inputPassword[keyRotate] = KEY2;
+					keyRotate++;
+				}
+				// 입력된 키와 저장된 키가 맞는지 검사
+				for (keyRotate = 0; keyRotate < 4; keyRotate++) {
+ 178:	1a 82       	std	Y+2, r1	; 0x02
+ 17a:	19 82       	std	Y+1, r1	; 0x01
+ 17c:	20 c0       	rjmp	.+64     	; 0x1be <main+0x14a>
+					if (password[keyRotate] == inputPassword[keyRotate]) {
+ 17e:	89 81       	ldd	r24, Y+1	; 0x01
+ 180:	9a 81       	ldd	r25, Y+2	; 0x02
+ 182:	80 5a       	subi	r24, 0xA0	; 160
+ 184:	9f 4f       	sbci	r25, 0xFF	; 255
+ 186:	fc 01       	movw	r30, r24
+ 188:	20 81       	ld	r18, Z
+ 18a:	89 81       	ldd	r24, Y+1	; 0x01
+ 18c:	9a 81       	ldd	r25, Y+2	; 0x02
+ 18e:	8c 59       	subi	r24, 0x9C	; 156
+ 190:	9f 4f       	sbci	r25, 0xFF	; 255
+ 192:	fc 01       	movw	r30, r24
+ 194:	80 81       	ld	r24, Z
+ 196:	28 17       	cp	r18, r24
+ 198:	61 f4       	brne	.+24     	; 0x1b2 <main+0x13e>
+						correct = 1;
+ 19a:	81 e0       	ldi	r24, 0x01	; 1
+ 19c:	90 e0       	ldi	r25, 0x00	; 0
+ 19e:	90 93 79 00 	sts	0x0079, r25
+ 1a2:	80 93 78 00 	sts	0x0078, r24
+
+					inputPassword[keyRotate] = KEY2;
+					keyRotate++;
+				}
+				// 입력된 키와 저장된 키가 맞는지 검사
+				for (keyRotate = 0; keyRotate < 4; keyRotate++) {
+ 1a6:	89 81       	ldd	r24, Y+1	; 0x01
+ 1a8:	9a 81       	ldd	r25, Y+2	; 0x02
+ 1aa:	01 96       	adiw	r24, 0x01	; 1
+ 1ac:	9a 83       	std	Y+2, r25	; 0x02
+ 1ae:	89 83       	std	Y+1, r24	; 0x01
+ 1b0:	06 c0       	rjmp	.+12     	; 0x1be <main+0x14a>
+					if (password[keyRotate] == inputPassword[keyRotate]) {
+						correct = 1;
+					} else {
+						correct = 0;
+ 1b2:	10 92 79 00 	sts	0x0079, r1
+ 1b6:	10 92 78 00 	sts	0x0078, r1
+						break;
+ 1ba:	00 00       	nop
+ 1bc:	72 c0       	rjmp	.+228    	; 0x2a2 <__stack+0x43>
+
+					inputPassword[keyRotate] = KEY2;
+					keyRotate++;
+				}
+				// 입력된 키와 저장된 키가 맞는지 검사
+				for (keyRotate = 0; keyRotate < 4; keyRotate++) {
+ 1be:	89 81       	ldd	r24, Y+1	; 0x01
+ 1c0:	9a 81       	ldd	r25, Y+2	; 0x02
+ 1c2:	84 30       	cpi	r24, 0x04	; 4
+ 1c4:	91 05       	cpc	r25, r1
+ 1c6:	d8 f2       	brcs	.-74     	; 0x17e <main+0x10a>
+ 1c8:	6c c0       	rjmp	.+216    	; 0x2a2 <__stack+0x43>
+						correct = 0;
+						break;
+					}
+				}
+				// e를 누르면 비밀번호 수정 대기 화면
+			} else if (KEY2 == 0x0b) {
+ 1ca:	80 91 7a 00 	lds	r24, 0x007A
+ 1ce:	8b 30       	cpi	r24, 0x0B	; 11
+ 1d0:	09 f0       	breq	.+2      	; 0x1d4 <main+0x160>
+ 1d2:	67 c0       	rjmp	.+206    	; 0x2a2 <__stack+0x43>
+				KCODE[KEY] = 0;
+ 1d4:	80 91 7b 00 	lds	r24, 0x007B
+ 1d8:	88 2f       	mov	r24, r24
+ 1da:	90 e0       	ldi	r25, 0x00	; 0
+ 1dc:	88 59       	subi	r24, 0x98	; 152
+ 1de:	9f 4f       	sbci	r25, 0xFF	; 255
+ 1e0:	fc 01       	movw	r30, r24
+ 1e2:	10 82       	st	Z, r1
+				keyRotate = 0x0b;
+ 1e4:	8b e0       	ldi	r24, 0x0B	; 11
+ 1e6:	90 e0       	ldi	r25, 0x00	; 0
+ 1e8:	9a 83       	std	Y+2, r25	; 0x02
+ 1ea:	89 83       	std	Y+1, r24	; 0x01
+				// 다시 a를 누르면 입력 종료
+				while (!(KCODE[KEY] == 0x0b) || keyRotate < 4) {
+ 1ec:	49 c0       	rjmp	.+146    	; 0x280 <__stack+0x21>
+					keyScan1();
+ 1ee:	5a d0       	rcall	.+180    	; 0x2a4 <keyScan1>
+					if (!(FLAG == 1)) {
+ 1f0:	80 91 7c 00 	lds	r24, 0x007C
+ 1f4:	81 30       	cpi	r24, 0x01	; 1
+ 1f6:	51 f0       	breq	.+20     	; 0x20c <main+0x198>
+						KEY2 = KCODE[KEY];
+ 1f8:	80 91 7b 00 	lds	r24, 0x007B
+ 1fc:	88 2f       	mov	r24, r24
+ 1fe:	90 e0       	ldi	r25, 0x00	; 0
+ 200:	88 59       	subi	r24, 0x98	; 152
+ 202:	9f 4f       	sbci	r25, 0xFF	; 255
+ 204:	fc 01       	movw	r30, r24
+ 206:	80 81       	ld	r24, Z
+ 208:	80 93 7a 00 	sts	0x007A, r24
+					}
+
+					keyScan2();
+ 20c:	91 d0       	rcall	.+290    	; 0x330 <keyScan2>
+					if (!(FLAG == 1)) {
+ 20e:	80 91 7c 00 	lds	r24, 0x007C
+ 212:	81 30       	cpi	r24, 0x01	; 1
+ 214:	51 f0       	breq	.+20     	; 0x22a <main+0x1b6>
+						KEY2 = KCODE[KEY];
+ 216:	80 91 7b 00 	lds	r24, 0x007B
+ 21a:	88 2f       	mov	r24, r24
+ 21c:	90 e0       	ldi	r25, 0x00	; 0
+ 21e:	88 59       	subi	r24, 0x98	; 152
+ 220:	9f 4f       	sbci	r25, 0xFF	; 255
+ 222:	fc 01       	movw	r30, r24
+ 224:	80 81       	ld	r24, Z
+ 226:	80 93 7a 00 	sts	0x007A, r24
+					}
+
+					keyScan3();
+ 22a:	c9 d0       	rcall	.+402    	; 0x3be <keyScan3>
+					if (!(FLAG == 1)) {
+ 22c:	80 91 7c 00 	lds	r24, 0x007C
+ 230:	81 30       	cpi	r24, 0x01	; 1
+ 232:	51 f0       	breq	.+20     	; 0x248 <main+0x1d4>
+						KEY2 = KCODE[KEY];
+ 234:	80 91 7b 00 	lds	r24, 0x007B
+ 238:	88 2f       	mov	r24, r24
+ 23a:	90 e0       	ldi	r25, 0x00	; 0
+ 23c:	88 59       	subi	r24, 0x98	; 152
+ 23e:	9f 4f       	sbci	r25, 0xFF	; 255
+ 240:	fc 01       	movw	r30, r24
+ 242:	80 81       	ld	r24, Z
+ 244:	80 93 7a 00 	sts	0x007A, r24
+					}
+
+					keyScan4();
+ 248:	01 d1       	rcall	.+514    	; 0x44c <keyScan4>
+					if (!(FLAG == 1)) {
+ 24a:	80 91 7c 00 	lds	r24, 0x007C
+ 24e:	81 30       	cpi	r24, 0x01	; 1
+ 250:	51 f0       	breq	.+20     	; 0x266 <__stack+0x7>
+						KEY2 = KCODE[KEY];
+ 252:	80 91 7b 00 	lds	r24, 0x007B
+ 256:	88 2f       	mov	r24, r24
+ 258:	90 e0       	ldi	r25, 0x00	; 0
+ 25a:	88 59       	subi	r24, 0x98	; 152
+ 25c:	9f 4f       	sbci	r25, 0xFF	; 255
+ 25e:	fc 01       	movw	r30, r24
+ 260:	80 81       	ld	r24, Z
+ 262:	80 93 7a 00 	sts	0x007A, r24
+					}
+
+					password[keyRotate] = KEY2;
+ 266:	20 91 7a 00 	lds	r18, 0x007A
+ 26a:	89 81       	ldd	r24, Y+1	; 0x01
+ 26c:	9a 81       	ldd	r25, Y+2	; 0x02
+ 26e:	80 5a       	subi	r24, 0xA0	; 160
+ 270:	9f 4f       	sbci	r25, 0xFF	; 255
+ 272:	fc 01       	movw	r30, r24
+ 274:	20 83       	st	Z, r18
+					keyRotate++;
+ 276:	89 81       	ldd	r24, Y+1	; 0x01
+ 278:	9a 81       	ldd	r25, Y+2	; 0x02
+ 27a:	01 96       	adiw	r24, 0x01	; 1
+ 27c:	9a 83       	std	Y+2, r25	; 0x02
+ 27e:	89 83       	std	Y+1, r24	; 0x01
+				// e를 누르면 비밀번호 수정 대기 화면
+			} else if (KEY2 == 0x0b) {
+				KCODE[KEY] = 0;
+				keyRotate = 0x0b;
+				// 다시 a를 누르면 입력 종료
+				while (!(KCODE[KEY] == 0x0b) || keyRotate < 4) {
+ 280:	80 91 7b 00 	lds	r24, 0x007B
+ 284:	88 2f       	mov	r24, r24
+ 286:	90 e0       	ldi	r25, 0x00	; 0
+ 288:	88 59       	subi	r24, 0x98	; 152
+ 28a:	9f 4f       	sbci	r25, 0xFF	; 255
+ 28c:	fc 01       	movw	r30, r24
+ 28e:	80 81       	ld	r24, Z
+ 290:	8b 30       	cpi	r24, 0x0B	; 11
+ 292:	09 f0       	breq	.+2      	; 0x296 <__stack+0x37>
+ 294:	ac cf       	rjmp	.-168    	; 0x1ee <main+0x17a>
+ 296:	89 81       	ldd	r24, Y+1	; 0x01
+ 298:	9a 81       	ldd	r25, Y+2	; 0x02
+ 29a:	84 30       	cpi	r24, 0x04	; 4
+ 29c:	91 05       	cpc	r25, r1
+ 29e:	08 f4       	brcc	.+2      	; 0x2a2 <__stack+0x43>
+ 2a0:	a6 cf       	rjmp	.-180    	; 0x1ee <main+0x17a>
+					password[keyRotate] = KEY2;
+					keyRotate++;
+				}
+			}
 		}
-	}while(1);
- 154:	eb cf       	rjmp	.-42     	; 0x12c <main+0x3a>
- 156:	ea cf       	rjmp	.-44     	; 0x12c <main+0x3a>
+	} while (1);
+ 2a2:	f4 ce       	rjmp	.-536    	; 0x8c <main+0x18>
 
-00000158 <_exit>:
- 158:	f8 94       	cli
+000002a4 <keyScan1>:
 
-0000015a <__stop_program>:
- 15a:	ff cf       	rjmp	.-2      	; 0x15a <__stop_program>
+unsigned char FLAG, KEY;
+
+// Catch 4x4 Hex Keypad Input
+void keyScan1(void)
+{
+ 2a4:	cf 93       	push	r28
+ 2a6:	df 93       	push	r29
+ 2a8:	00 d0       	rcall	.+0      	; 0x2aa <keyScan1+0x6>
+ 2aa:	1f 92       	push	r1
+ 2ac:	cd b7       	in	r28, 0x3d	; 61
+ 2ae:	de b7       	in	r29, 0x3e	; 62
+	unsigned char keyRow = 0;
+ 2b0:	19 82       	std	Y+1, r1	; 0x01
+	unsigned char keyInsert = 0;
+ 2b2:	1a 82       	std	Y+2, r1	; 0x02
+	unsigned char keyColumn;
+
+	KEY = keyColumn = 0;
+ 2b4:	1b 82       	std	Y+3, r1	; 0x03
+ 2b6:	8b 81       	ldd	r24, Y+3	; 0x03
+ 2b8:	80 93 7b 00 	sts	0x007B, r24
+	FLAG = 1;
+ 2bc:	81 e0       	ldi	r24, 0x01	; 1
+ 2be:	80 93 7c 00 	sts	0x007C, r24
+
+	// Output keyboard 1row
+	PORTA = 0xfe;
+ 2c2:	8b e3       	ldi	r24, 0x3B	; 59
+ 2c4:	90 e0       	ldi	r25, 0x00	; 0
+ 2c6:	2e ef       	ldi	r18, 0xFE	; 254
+ 2c8:	fc 01       	movw	r30, r24
+ 2ca:	20 83       	st	Z, r18
+	asm ("nop");
+ 2cc:	00 00       	nop
+	asm ("nop");
+ 2ce:	00 00       	nop
+	keyInsert = PINA;
+ 2d0:	89 e3       	ldi	r24, 0x39	; 57
+ 2d2:	90 e0       	ldi	r25, 0x00	; 0
+ 2d4:	fc 01       	movw	r30, r24
+ 2d6:	80 81       	ld	r24, Z
+ 2d8:	8a 83       	std	Y+2, r24	; 0x02
+	keyInsert = (keyInsert >> 4) | 0xf0;
+ 2da:	8a 81       	ldd	r24, Y+2	; 0x02
+ 2dc:	82 95       	swap	r24
+ 2de:	8f 70       	andi	r24, 0x0F	; 15
+ 2e0:	80 6f       	ori	r24, 0xF0	; 240
+ 2e2:	8a 83       	std	Y+2, r24	; 0x02
+	for(keyRow = 0; keyRow < 4; keyRow++)
+ 2e4:	19 82       	std	Y+1, r1	; 0x01
+ 2e6:	17 c0       	rjmp	.+46     	; 0x316 <keyScan1+0x72>
+	{
+		if(!(keyInsert & 0x01))
+ 2e8:	8a 81       	ldd	r24, Y+2	; 0x02
+ 2ea:	88 2f       	mov	r24, r24
+ 2ec:	90 e0       	ldi	r25, 0x00	; 0
+ 2ee:	81 70       	andi	r24, 0x01	; 1
+ 2f0:	99 27       	eor	r25, r25
+ 2f2:	00 97       	sbiw	r24, 0x00	; 0
+ 2f4:	29 f4       	brne	.+10     	; 0x300 <keyScan1+0x5c>
+		{
+			keyColumn = KEY;
+ 2f6:	80 91 7b 00 	lds	r24, 0x007B
+ 2fa:	8b 83       	std	Y+3, r24	; 0x03
+			FLAG = 0;
+ 2fc:	10 92 7c 00 	sts	0x007C, r1
+		}
+		keyInsert >>= 1;
+ 300:	8a 81       	ldd	r24, Y+2	; 0x02
+ 302:	86 95       	lsr	r24
+ 304:	8a 83       	std	Y+2, r24	; 0x02
+		KEY++;
+ 306:	80 91 7b 00 	lds	r24, 0x007B
+ 30a:	8f 5f       	subi	r24, 0xFF	; 255
+ 30c:	80 93 7b 00 	sts	0x007B, r24
+	PORTA = 0xfe;
+	asm ("nop");
+	asm ("nop");
+	keyInsert = PINA;
+	keyInsert = (keyInsert >> 4) | 0xf0;
+	for(keyRow = 0; keyRow < 4; keyRow++)
+ 310:	89 81       	ldd	r24, Y+1	; 0x01
+ 312:	8f 5f       	subi	r24, 0xFF	; 255
+ 314:	89 83       	std	Y+1, r24	; 0x01
+ 316:	89 81       	ldd	r24, Y+1	; 0x01
+ 318:	84 30       	cpi	r24, 0x04	; 4
+ 31a:	30 f3       	brcs	.-52     	; 0x2e8 <keyScan1+0x44>
+			FLAG = 0;
+		}
+		keyInsert >>= 1;
+		KEY++;
+	}
+	KEY = keyColumn & 0x0f;
+ 31c:	8b 81       	ldd	r24, Y+3	; 0x03
+ 31e:	8f 70       	andi	r24, 0x0F	; 15
+ 320:	80 93 7b 00 	sts	0x007B, r24
+}
+ 324:	0f 90       	pop	r0
+ 326:	0f 90       	pop	r0
+ 328:	0f 90       	pop	r0
+ 32a:	df 91       	pop	r29
+ 32c:	cf 91       	pop	r28
+ 32e:	08 95       	ret
+
+00000330 <keyScan2>:
+
+void keyScan2(void)
+{
+ 330:	cf 93       	push	r28
+ 332:	df 93       	push	r29
+ 334:	00 d0       	rcall	.+0      	; 0x336 <keyScan2+0x6>
+ 336:	1f 92       	push	r1
+ 338:	cd b7       	in	r28, 0x3d	; 61
+ 33a:	de b7       	in	r29, 0x3e	; 62
+	unsigned char keyRow = 0;
+ 33c:	19 82       	std	Y+1, r1	; 0x01
+	unsigned char keyInsert = 0;
+ 33e:	1a 82       	std	Y+2, r1	; 0x02
+	unsigned char keyColumn;
+
+	KEY = keyColumn = 4;
+ 340:	84 e0       	ldi	r24, 0x04	; 4
+ 342:	8b 83       	std	Y+3, r24	; 0x03
+ 344:	8b 81       	ldd	r24, Y+3	; 0x03
+ 346:	80 93 7b 00 	sts	0x007B, r24
+	FLAG = 1;
+ 34a:	81 e0       	ldi	r24, 0x01	; 1
+ 34c:	80 93 7c 00 	sts	0x007C, r24
+
+	// Output keyboard 1row
+	PORTA = 0xfd;
+ 350:	8b e3       	ldi	r24, 0x3B	; 59
+ 352:	90 e0       	ldi	r25, 0x00	; 0
+ 354:	2d ef       	ldi	r18, 0xFD	; 253
+ 356:	fc 01       	movw	r30, r24
+ 358:	20 83       	st	Z, r18
+	asm ("nop");
+ 35a:	00 00       	nop
+	asm ("nop");
+ 35c:	00 00       	nop
+	keyInsert = PINA;
+ 35e:	89 e3       	ldi	r24, 0x39	; 57
+ 360:	90 e0       	ldi	r25, 0x00	; 0
+ 362:	fc 01       	movw	r30, r24
+ 364:	80 81       	ld	r24, Z
+ 366:	8a 83       	std	Y+2, r24	; 0x02
+	keyInsert = (keyInsert >> 4) | 0xf0;
+ 368:	8a 81       	ldd	r24, Y+2	; 0x02
+ 36a:	82 95       	swap	r24
+ 36c:	8f 70       	andi	r24, 0x0F	; 15
+ 36e:	80 6f       	ori	r24, 0xF0	; 240
+ 370:	8a 83       	std	Y+2, r24	; 0x02
+	for(keyRow = 0; keyRow < 4; keyRow++)
+ 372:	19 82       	std	Y+1, r1	; 0x01
+ 374:	17 c0       	rjmp	.+46     	; 0x3a4 <keyScan2+0x74>
+	{
+		if(!(keyInsert & 0x01))
+ 376:	8a 81       	ldd	r24, Y+2	; 0x02
+ 378:	88 2f       	mov	r24, r24
+ 37a:	90 e0       	ldi	r25, 0x00	; 0
+ 37c:	81 70       	andi	r24, 0x01	; 1
+ 37e:	99 27       	eor	r25, r25
+ 380:	00 97       	sbiw	r24, 0x00	; 0
+ 382:	29 f4       	brne	.+10     	; 0x38e <keyScan2+0x5e>
+		{
+			keyColumn = KEY;
+ 384:	80 91 7b 00 	lds	r24, 0x007B
+ 388:	8b 83       	std	Y+3, r24	; 0x03
+			FLAG = 0;
+ 38a:	10 92 7c 00 	sts	0x007C, r1
+		}
+		keyInsert >>= 1;
+ 38e:	8a 81       	ldd	r24, Y+2	; 0x02
+ 390:	86 95       	lsr	r24
+ 392:	8a 83       	std	Y+2, r24	; 0x02
+		KEY++;
+ 394:	80 91 7b 00 	lds	r24, 0x007B
+ 398:	8f 5f       	subi	r24, 0xFF	; 255
+ 39a:	80 93 7b 00 	sts	0x007B, r24
+	PORTA = 0xfd;
+	asm ("nop");
+	asm ("nop");
+	keyInsert = PINA;
+	keyInsert = (keyInsert >> 4) | 0xf0;
+	for(keyRow = 0; keyRow < 4; keyRow++)
+ 39e:	89 81       	ldd	r24, Y+1	; 0x01
+ 3a0:	8f 5f       	subi	r24, 0xFF	; 255
+ 3a2:	89 83       	std	Y+1, r24	; 0x01
+ 3a4:	89 81       	ldd	r24, Y+1	; 0x01
+ 3a6:	84 30       	cpi	r24, 0x04	; 4
+ 3a8:	30 f3       	brcs	.-52     	; 0x376 <keyScan2+0x46>
+			FLAG = 0;
+		}
+		keyInsert >>= 1;
+		KEY++;
+	}
+	KEY = keyColumn & 0x0f;
+ 3aa:	8b 81       	ldd	r24, Y+3	; 0x03
+ 3ac:	8f 70       	andi	r24, 0x0F	; 15
+ 3ae:	80 93 7b 00 	sts	0x007B, r24
+}
+ 3b2:	0f 90       	pop	r0
+ 3b4:	0f 90       	pop	r0
+ 3b6:	0f 90       	pop	r0
+ 3b8:	df 91       	pop	r29
+ 3ba:	cf 91       	pop	r28
+ 3bc:	08 95       	ret
+
+000003be <keyScan3>:
+
+void keyScan3(void)
+{
+ 3be:	cf 93       	push	r28
+ 3c0:	df 93       	push	r29
+ 3c2:	00 d0       	rcall	.+0      	; 0x3c4 <keyScan3+0x6>
+ 3c4:	1f 92       	push	r1
+ 3c6:	cd b7       	in	r28, 0x3d	; 61
+ 3c8:	de b7       	in	r29, 0x3e	; 62
+	unsigned char keyRow = 0;
+ 3ca:	19 82       	std	Y+1, r1	; 0x01
+	unsigned char keyInsert = 0;
+ 3cc:	1a 82       	std	Y+2, r1	; 0x02
+	unsigned char keyColumn;
+
+	KEY = keyColumn = 8;
+ 3ce:	88 e0       	ldi	r24, 0x08	; 8
+ 3d0:	8b 83       	std	Y+3, r24	; 0x03
+ 3d2:	8b 81       	ldd	r24, Y+3	; 0x03
+ 3d4:	80 93 7b 00 	sts	0x007B, r24
+	FLAG = 1;
+ 3d8:	81 e0       	ldi	r24, 0x01	; 1
+ 3da:	80 93 7c 00 	sts	0x007C, r24
+
+	// Output keyboard 1row
+	PORTA = 0xfb;
+ 3de:	8b e3       	ldi	r24, 0x3B	; 59
+ 3e0:	90 e0       	ldi	r25, 0x00	; 0
+ 3e2:	2b ef       	ldi	r18, 0xFB	; 251
+ 3e4:	fc 01       	movw	r30, r24
+ 3e6:	20 83       	st	Z, r18
+	asm ("nop");
+ 3e8:	00 00       	nop
+	asm ("nop");
+ 3ea:	00 00       	nop
+	keyInsert = PINA;
+ 3ec:	89 e3       	ldi	r24, 0x39	; 57
+ 3ee:	90 e0       	ldi	r25, 0x00	; 0
+ 3f0:	fc 01       	movw	r30, r24
+ 3f2:	80 81       	ld	r24, Z
+ 3f4:	8a 83       	std	Y+2, r24	; 0x02
+	keyInsert = (keyInsert >> 4) | 0xf0;
+ 3f6:	8a 81       	ldd	r24, Y+2	; 0x02
+ 3f8:	82 95       	swap	r24
+ 3fa:	8f 70       	andi	r24, 0x0F	; 15
+ 3fc:	80 6f       	ori	r24, 0xF0	; 240
+ 3fe:	8a 83       	std	Y+2, r24	; 0x02
+	for(keyRow = 0; keyRow < 4; keyRow++)
+ 400:	19 82       	std	Y+1, r1	; 0x01
+ 402:	17 c0       	rjmp	.+46     	; 0x432 <keyScan3+0x74>
+	{
+		if(!(keyInsert & 0x01))
+ 404:	8a 81       	ldd	r24, Y+2	; 0x02
+ 406:	88 2f       	mov	r24, r24
+ 408:	90 e0       	ldi	r25, 0x00	; 0
+ 40a:	81 70       	andi	r24, 0x01	; 1
+ 40c:	99 27       	eor	r25, r25
+ 40e:	00 97       	sbiw	r24, 0x00	; 0
+ 410:	29 f4       	brne	.+10     	; 0x41c <keyScan3+0x5e>
+		{
+			keyColumn = KEY;
+ 412:	80 91 7b 00 	lds	r24, 0x007B
+ 416:	8b 83       	std	Y+3, r24	; 0x03
+			FLAG = 0;
+ 418:	10 92 7c 00 	sts	0x007C, r1
+		}
+		keyInsert >>= 1;
+ 41c:	8a 81       	ldd	r24, Y+2	; 0x02
+ 41e:	86 95       	lsr	r24
+ 420:	8a 83       	std	Y+2, r24	; 0x02
+		KEY++;
+ 422:	80 91 7b 00 	lds	r24, 0x007B
+ 426:	8f 5f       	subi	r24, 0xFF	; 255
+ 428:	80 93 7b 00 	sts	0x007B, r24
+	PORTA = 0xfb;
+	asm ("nop");
+	asm ("nop");
+	keyInsert = PINA;
+	keyInsert = (keyInsert >> 4) | 0xf0;
+	for(keyRow = 0; keyRow < 4; keyRow++)
+ 42c:	89 81       	ldd	r24, Y+1	; 0x01
+ 42e:	8f 5f       	subi	r24, 0xFF	; 255
+ 430:	89 83       	std	Y+1, r24	; 0x01
+ 432:	89 81       	ldd	r24, Y+1	; 0x01
+ 434:	84 30       	cpi	r24, 0x04	; 4
+ 436:	30 f3       	brcs	.-52     	; 0x404 <keyScan3+0x46>
+			FLAG = 0;
+		}
+		keyInsert >>= 1;
+		KEY++;
+	}
+	KEY = keyColumn & 0x0f;
+ 438:	8b 81       	ldd	r24, Y+3	; 0x03
+ 43a:	8f 70       	andi	r24, 0x0F	; 15
+ 43c:	80 93 7b 00 	sts	0x007B, r24
+}
+ 440:	0f 90       	pop	r0
+ 442:	0f 90       	pop	r0
+ 444:	0f 90       	pop	r0
+ 446:	df 91       	pop	r29
+ 448:	cf 91       	pop	r28
+ 44a:	08 95       	ret
+
+0000044c <keyScan4>:
+
+void keyScan4(void)
+{
+ 44c:	cf 93       	push	r28
+ 44e:	df 93       	push	r29
+ 450:	00 d0       	rcall	.+0      	; 0x452 <keyScan4+0x6>
+ 452:	1f 92       	push	r1
+ 454:	cd b7       	in	r28, 0x3d	; 61
+ 456:	de b7       	in	r29, 0x3e	; 62
+	unsigned char keyRow = 0;
+ 458:	19 82       	std	Y+1, r1	; 0x01
+	unsigned char keyInsert = 0;
+ 45a:	1a 82       	std	Y+2, r1	; 0x02
+	unsigned char keyColumn;
+
+	KEY = keyColumn = 12;
+ 45c:	8c e0       	ldi	r24, 0x0C	; 12
+ 45e:	8b 83       	std	Y+3, r24	; 0x03
+ 460:	8b 81       	ldd	r24, Y+3	; 0x03
+ 462:	80 93 7b 00 	sts	0x007B, r24
+	FLAG = 1;
+ 466:	81 e0       	ldi	r24, 0x01	; 1
+ 468:	80 93 7c 00 	sts	0x007C, r24
+
+	// Output keyboard 1row
+	PORTA = 0xf7;
+ 46c:	8b e3       	ldi	r24, 0x3B	; 59
+ 46e:	90 e0       	ldi	r25, 0x00	; 0
+ 470:	27 ef       	ldi	r18, 0xF7	; 247
+ 472:	fc 01       	movw	r30, r24
+ 474:	20 83       	st	Z, r18
+	asm ("nop");
+ 476:	00 00       	nop
+	asm ("nop");
+ 478:	00 00       	nop
+	keyInsert = PINA;
+ 47a:	89 e3       	ldi	r24, 0x39	; 57
+ 47c:	90 e0       	ldi	r25, 0x00	; 0
+ 47e:	fc 01       	movw	r30, r24
+ 480:	80 81       	ld	r24, Z
+ 482:	8a 83       	std	Y+2, r24	; 0x02
+	keyInsert = (keyInsert >> 4) | 0xf0;
+ 484:	8a 81       	ldd	r24, Y+2	; 0x02
+ 486:	82 95       	swap	r24
+ 488:	8f 70       	andi	r24, 0x0F	; 15
+ 48a:	80 6f       	ori	r24, 0xF0	; 240
+ 48c:	8a 83       	std	Y+2, r24	; 0x02
+	for(keyRow = 0; keyRow < 4; keyRow++)
+ 48e:	19 82       	std	Y+1, r1	; 0x01
+ 490:	17 c0       	rjmp	.+46     	; 0x4c0 <keyScan4+0x74>
+	{
+		if(!(keyInsert & 0x01))
+ 492:	8a 81       	ldd	r24, Y+2	; 0x02
+ 494:	88 2f       	mov	r24, r24
+ 496:	90 e0       	ldi	r25, 0x00	; 0
+ 498:	81 70       	andi	r24, 0x01	; 1
+ 49a:	99 27       	eor	r25, r25
+ 49c:	00 97       	sbiw	r24, 0x00	; 0
+ 49e:	29 f4       	brne	.+10     	; 0x4aa <keyScan4+0x5e>
+		{
+			keyColumn = KEY;
+ 4a0:	80 91 7b 00 	lds	r24, 0x007B
+ 4a4:	8b 83       	std	Y+3, r24	; 0x03
+			FLAG = 0;
+ 4a6:	10 92 7c 00 	sts	0x007C, r1
+		}
+		keyInsert >>= 1;
+ 4aa:	8a 81       	ldd	r24, Y+2	; 0x02
+ 4ac:	86 95       	lsr	r24
+ 4ae:	8a 83       	std	Y+2, r24	; 0x02
+		KEY++;
+ 4b0:	80 91 7b 00 	lds	r24, 0x007B
+ 4b4:	8f 5f       	subi	r24, 0xFF	; 255
+ 4b6:	80 93 7b 00 	sts	0x007B, r24
+	PORTA = 0xf7;
+	asm ("nop");
+	asm ("nop");
+	keyInsert = PINA;
+	keyInsert = (keyInsert >> 4) | 0xf0;
+	for(keyRow = 0; keyRow < 4; keyRow++)
+ 4ba:	89 81       	ldd	r24, Y+1	; 0x01
+ 4bc:	8f 5f       	subi	r24, 0xFF	; 255
+ 4be:	89 83       	std	Y+1, r24	; 0x01
+ 4c0:	89 81       	ldd	r24, Y+1	; 0x01
+ 4c2:	84 30       	cpi	r24, 0x04	; 4
+ 4c4:	30 f3       	brcs	.-52     	; 0x492 <keyScan4+0x46>
+			FLAG = 0;
+		}
+		keyInsert >>= 1;
+		KEY++;
+	}
+	KEY = keyColumn & 0x0f;
+ 4c6:	8b 81       	ldd	r24, Y+3	; 0x03
+ 4c8:	8f 70       	andi	r24, 0x0F	; 15
+ 4ca:	80 93 7b 00 	sts	0x007B, r24
+}
+ 4ce:	0f 90       	pop	r0
+ 4d0:	0f 90       	pop	r0
+ 4d2:	0f 90       	pop	r0
+ 4d4:	df 91       	pop	r29
+ 4d6:	cf 91       	pop	r28
+ 4d8:	08 95       	ret
+
+000004da <_exit>:
+ 4da:	f8 94       	cli
+
+000004dc <__stop_program>:
+ 4dc:	ff cf       	rjmp	.-2      	; 0x4dc <__stop_program>

@@ -11,8 +11,8 @@ Allocating common symbols
 Common symbol       size              file
 
 KEY2                0x1               ./sources/main.o
-KEY                 0x1               ./sources/main.o
-FLAG                0x1               ./sources/main.o
+KEY                 0x1               ./sources/set_doorlock.o
+FLAG                0x1               ./sources/set_doorlock.o
 
 Memory Configuration
 
@@ -30,6 +30,7 @@ Linker script and memory map
 
 LOAD /usr/lib/gcc/avr/4.8.1/../../../avr/lib/avr4/crtm8535.o
 LOAD ./sources/main.o
+LOAD ./sources/set_doorlock.o
 START GROUP
 LOAD /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a
 LOAD /usr/lib/gcc/avr/4.8.1/../../../avr/lib/avr4/libm.a
@@ -126,7 +127,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x0000000000000000      0x15c
+.text           0x0000000000000000      0x4de
  *(.vectors)
  .vectors       0x0000000000000000       0x2a /usr/lib/gcc/avr/4.8.1/../../../avr/lib/avr4/crtm8535.o
                 0x0000000000000000                __vectors
@@ -205,62 +206,73 @@ END GROUP
                 0x0000000000000060                __vector_18
                 0x0000000000000060                __vector_20
  .text          0x0000000000000062        0x0 ./sources/main.o
+ .text          0x0000000000000062        0x0 ./sources/set_doorlock.o
  .text          0x0000000000000062        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  .text          0x0000000000000062        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
  .text          0x0000000000000062        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
                 0x0000000000000062                . = ALIGN (0x2)
  *(.text.*)
- .text.keyScan  0x0000000000000062       0x82 ./sources/main.o
-                0x0000000000000062                keyScan
  .text.valveMotor
-                0x00000000000000e4        0xe ./sources/main.o
-                0x00000000000000e4                valveMotor
- .text.main     0x00000000000000f2       0x66 ./sources/main.o
-                0x00000000000000f2                main
+                0x0000000000000062       0x12 ./sources/main.o
+                0x0000000000000062                valveMotor
+ .text.main     0x0000000000000074      0x230 ./sources/main.o
+                0x0000000000000074                main
+ .text.keyScan1
+                0x00000000000002a4       0x8c ./sources/set_doorlock.o
+                0x00000000000002a4                keyScan1
+ .text.keyScan2
+                0x0000000000000330       0x8e ./sources/set_doorlock.o
+                0x0000000000000330                keyScan2
+ .text.keyScan3
+                0x00000000000003be       0x8e ./sources/set_doorlock.o
+                0x00000000000003be                keyScan3
+ .text.keyScan4
+                0x000000000000044c       0x8e ./sources/set_doorlock.o
+                0x000000000000044c                keyScan4
  .text.libgcc.mul
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  .text.libgcc.div
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
- .text.libgcc   0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+ .text.libgcc   0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  .text.libgcc.prologue
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  .text.libgcc.builtins
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  .text.libgcc.fmul
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  .text.libgcc.fixed
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  .text.libgcc.mul
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
  .text.libgcc.div
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
- .text.libgcc   0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
+ .text.libgcc   0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
  .text.libgcc.prologue
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
  .text.libgcc.builtins
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
  .text.libgcc.fmul
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
  .text.libgcc.fixed
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
  .text.libgcc.mul
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
  .text.libgcc.div
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
- .text.libgcc   0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
+ .text.libgcc   0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
  .text.libgcc.prologue
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
  .text.libgcc.builtins
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
  .text.libgcc.fmul
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
  .text.libgcc.fixed
-                0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
-                0x0000000000000158                . = ALIGN (0x2)
+                0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
+                0x00000000000004da                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000000000000158        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
-                0x0000000000000158                exit
-                0x0000000000000158                _exit
+ .fini9         0x00000000000004da        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+                0x00000000000004da                exit
+                0x00000000000004da                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -279,52 +291,63 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000000000000158        0x4 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+ .fini0         0x00000000000004da        0x4 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  *(.fini0)
-                0x000000000000015c                _etext = .
+                0x00000000000004de                _etext = .
 
-.data           0x0000000000800060       0x10 load address 0x000000000000015c
+.data           0x0000000000800060       0x18 load address 0x00000000000004de
                 0x0000000000800060                PROVIDE (__data_start, .)
  *(.data)
  .data          0x0000000000800060        0x0 /usr/lib/gcc/avr/4.8.1/../../../avr/lib/avr4/crtm8535.o
  .data          0x0000000000800060        0x0 ./sources/main.o
+ .data          0x0000000000800060        0x0 ./sources/set_doorlock.o
  .data          0x0000000000800060        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
  .data          0x0000000000800060        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
  .data          0x0000000000800060        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
  *(.data*)
- .data.KCODE    0x0000000000800060       0x10 ./sources/main.o
-                0x0000000000800060                KCODE
+ .data.password
+                0x0000000000800060        0x4 ./sources/main.o
+                0x0000000000800060                password
+ .data.inputPassword
+                0x0000000000800064        0x4 ./sources/main.o
+                0x0000000000800064                inputPassword
+ .data.KCODE    0x0000000000800068       0x10 ./sources/main.o
+                0x0000000000800068                KCODE
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.d*)
-                0x0000000000800070                . = ALIGN (0x2)
-                0x0000000000800070                _edata = .
-                0x0000000000800070                PROVIDE (__data_end, .)
+                0x0000000000800078                . = ALIGN (0x2)
+                0x0000000000800078                _edata = .
+                0x0000000000800078                PROVIDE (__data_end, .)
 
-.bss            0x0000000000800070        0x3
-                0x0000000000800070                PROVIDE (__bss_start, .)
+.bss            0x0000000000800078        0x5
+                0x0000000000800078                PROVIDE (__bss_start, .)
  *(.bss)
- .bss           0x0000000000800070        0x0 /usr/lib/gcc/avr/4.8.1/../../../avr/lib/avr4/crtm8535.o
- .bss           0x0000000000800070        0x0 ./sources/main.o
- .bss           0x0000000000800070        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
- .bss           0x0000000000800070        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
- .bss           0x0000000000800070        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
+ .bss           0x0000000000800078        0x0 /usr/lib/gcc/avr/4.8.1/../../../avr/lib/avr4/crtm8535.o
+ .bss           0x0000000000800078        0x0 ./sources/main.o
+ .bss           0x0000000000800078        0x0 ./sources/set_doorlock.o
+ .bss           0x0000000000800078        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_exit.o)
+ .bss           0x0000000000800078        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_copy_data.o)
+ .bss           0x0000000000800078        0x0 /usr/lib/gcc/avr/4.8.1/avr4/libgcc.a(_clear_bss.o)
  *(.bss*)
+ .bss.correct   0x0000000000800078        0x2 ./sources/main.o
+                0x0000000000800078                correct
  *(COMMON)
- COMMON         0x0000000000800070        0x3 ./sources/main.o
-                0x0000000000800070                KEY2
-                0x0000000000800071                KEY
-                0x0000000000800072                FLAG
-                0x0000000000800073                PROVIDE (__bss_end, .)
-                0x000000000000015c                __data_load_start = LOADADDR (.data)
-                0x000000000000016c                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x000000000080007a        0x1 ./sources/main.o
+                0x000000000080007a                KEY2
+ COMMON         0x000000000080007b        0x2 ./sources/set_doorlock.o
+                0x000000000080007b                KEY
+                0x000000000080007c                FLAG
+                0x000000000080007d                PROVIDE (__bss_end, .)
+                0x00000000000004de                __data_load_start = LOADADDR (.data)
+                0x00000000000004f6                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x0000000000800073        0x0
-                0x0000000000800073                PROVIDE (__noinit_start, .)
+.noinit         0x000000000080007d        0x0
+                0x000000000080007d                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x0000000000800073                PROVIDE (__noinit_end, .)
-                0x0000000000800073                _end = .
-                0x0000000000800073                PROVIDE (__heap_start, .)
+                0x000000000080007d                PROVIDE (__noinit_end, .)
+                0x000000000080007d                _end = .
+                0x000000000080007d                PROVIDE (__heap_start, .)
 
 .eeprom         0x0000000000810000        0x0
  *(.eeprom*)
@@ -345,13 +368,15 @@ END GROUP
 .user_signatures
  *(.user_signatures*)
 
-.stab           0x0000000000000000      0x660
+.stab           0x0000000000000000      0xf18
  *(.stab)
- .stab          0x0000000000000000      0x660 ./sources/main.o
+ .stab          0x0000000000000000      0x780 ./sources/main.o
+ .stab          0x0000000000000780      0x798 ./sources/set_doorlock.o
+                                        0x960 (size before relaxing)
 
-.stabstr        0x0000000000000000      0xbca
+.stabstr        0x0000000000000000      0xc80
  *(.stabstr)
- .stabstr       0x0000000000000000      0xbca ./sources/main.o
+ .stabstr       0x0000000000000000      0xc80 ./sources/main.o
 
 .stab.excl
  *(.stab.excl)
@@ -369,6 +394,7 @@ END GROUP
  *(.comment)
  .comment       0x0000000000000000       0x11 ./sources/main.o
                                          0x12 (size before relaxing)
+ .comment       0x0000000000000000       0x12 ./sources/set_doorlock.o
 
 .note.gnu.build-id
  *(.note.gnu.build-id)

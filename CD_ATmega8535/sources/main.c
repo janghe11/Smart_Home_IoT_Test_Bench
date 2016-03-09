@@ -5,6 +5,7 @@
  *      Author: jang
  */
 //#include "io8535.h"
+//#include "LCD4.h"
 #include <avr/io.h>
 #include "set_doorlock.h"
 
@@ -23,6 +24,17 @@ int correct = 0;
  */
 /*__flash */unsigned char KCODE[16] = { 0x00, 0x04, 0x08, 0x0c, 0x01, 0x05,
 		0x09, 0x0d, 0x02, 0x06, 0x0a, 0x0e, 0x03, 0x07, 0x0b, 0x0f };
+// LCD 화면 표시를 위한 변수 선언 (최대 4개 가능) Message variables for character LCD (Maximum 4 variables)
+/*__flash */char msg1[] = " Test Message 1";
+/*__flash */char msg2[] = " Test Message 2";
+///*__flash */char msg3[] = " Test Message 3";
+///*__flash */char msg4[] = " Test Message 4";
+
+int delay(unsigned int i)
+{
+	while(i--);
+	return 0;
+}
 
 // Rotate Step Motor 180 on/off
 int valveMotor(void) {
@@ -35,8 +47,16 @@ int main(void) {
 	//DISPLAY function for MDA_Multi (Not working in regular ATmega header files.)
 	//L_INIT();
 	//DISPLAY();
-	// Keypad L0 ~ L3 (Input PA7 ~ PA4), C3 ~ C0 (Output PA3 ~ PA0)
+	/*
+	 * DDRA : Keypad L0 ~ L3 (Input PA7 ~ PA4), C3 ~ C0 (Output PA3 ~ PA0)
+	 * DDRB : Push button (Input PB7 ~ PB4), Rotary Switch (Output PB3 ~ PB0)
+	 * DDRC : Character LCD (Output PC7 ~ PC0)
+	 * DDRD : Step motor (Output PD7 ~ PD0)
+	 */
 	DDRA = 0x0f;
+	DDRB = 0x00;
+	DDRC = 0xff;
+	DDRD = 0xff;
 	do {
 		// a 혹은 e를 검출하기 위해 3번 row 검사
 		keyScan3();

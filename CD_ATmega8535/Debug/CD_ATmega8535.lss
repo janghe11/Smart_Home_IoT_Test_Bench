@@ -134,12 +134,12 @@ int get_rs232Data(void)
   96:	08 95       	ret
 
 00000098 <delay>:
+/*__flash */char msg1[] = " Test Message 1";
 /*__flash */char msg2[] = " Test Message 2";
 ///*__flash */char msg3[] = " Test Message 3";
 ///*__flash */char msg4[] = " Test Message 4";
 
-int delay(unsigned int i)
-{
+int delay(unsigned int i) {
   98:	cf 93       	push	r28
   9a:	df 93       	push	r29
   9c:	00 d0       	rcall	.+0      	; 0x9e <delay+0x6>
@@ -147,7 +147,7 @@ int delay(unsigned int i)
   a0:	de b7       	in	r29, 0x3e	; 62
   a2:	9a 83       	std	Y+2, r25	; 0x02
   a4:	89 83       	std	Y+1, r24	; 0x01
-	while(i--);
+	while (i--)
   a6:	00 00       	nop
   a8:	89 81       	ldd	r24, Y+1	; 0x01
   aa:	9a 81       	ldd	r25, Y+2	; 0x02
@@ -158,6 +158,7 @@ int delay(unsigned int i)
   b4:	29 83       	std	Y+1, r18	; 0x01
   b6:	00 97       	sbiw	r24, 0x00	; 0
   b8:	b9 f7       	brne	.-18     	; 0xa8 <delay+0x10>
+		;
 	return 0;
   ba:	80 e0       	ldi	r24, 0x00	; 0
   bc:	90 e0       	ldi	r25, 0x00	; 0
@@ -230,20 +231,20 @@ int main(int argc, char* argv[]) {
  114:	2f ef       	ldi	r18, 0xFF	; 255
  116:	fc 01       	movw	r30, r24
  118:	20 83       	st	Z, r18
-		else if(X3)
-		{
+		//1. Door lock & Step Motor Open Process
+		if (X0) {
+			// LCD Display -> Door lock and Password
 
-		}
-		// a 혹은 e를 검출하기 위해 3번 row 검사
-		keyScan3();
+			// a 혹은 e를 검출하기 위해 3번 row 검사
+			keyScan3();
  11a:	98 d1       	rcall	.+816    	; 0x44c <keyScan3>
-		if (!(FLAG == 1)) {
+			if (!(FLAG == 1)) {
  11c:	80 91 9c 00 	lds	r24, 0x009C
  120:	81 30       	cpi	r24, 0x01	; 1
  122:	09 f4       	brne	.+2      	; 0x126 <main+0x4c>
  124:	05 c1       	rjmp	.+522    	; 0x330 <__stack+0xd1>
-			// a를 누르면 비밀번호 입력 대기 화면
-			if (KCODE[KEY] == 0x0a) {
+				// a를 누르면 비밀번호 입력 대기 화면
+				if (KCODE[KEY] == 0x0a) {
  126:	80 91 9b 00 	lds	r24, 0x009B
  12a:	88 2f       	mov	r24, r24
  12c:	90 e0       	ldi	r25, 0x00	; 0
@@ -254,7 +255,7 @@ int main(int argc, char* argv[]) {
  136:	8a 30       	cpi	r24, 0x0A	; 10
  138:	09 f0       	breq	.+2      	; 0x13c <main+0x62>
  13a:	8e c0       	rjmp	.+284    	; 0x258 <main+0x17e>
-				KCODE[KEY] = 0;
+					KCODE[KEY] = 0;
  13c:	80 91 9b 00 	lds	r24, 0x009B
  140:	88 2f       	mov	r24, r24
  142:	90 e0       	ldi	r25, 0x00	; 0
@@ -262,19 +263,19 @@ int main(int argc, char* argv[]) {
  146:	9f 4f       	sbci	r25, 0xFF	; 255
  148:	fc 01       	movw	r30, r24
  14a:	10 82       	st	Z, r1
-				keyRotate = 0;
+					keyRotate = 0;
  14c:	1a 82       	std	Y+2, r1	; 0x02
  14e:	19 82       	std	Y+1, r1	; 0x01
-				// 다시 a를 누르면 입력 종료
-				while (!(KCODE[KEY] == 0x0a) || keyRotate < 4) {
+					// 다시 a를 누르면 입력 종료
+					while (!(KCODE[KEY] == 0x0a) || keyRotate < 4) {
  150:	49 c0       	rjmp	.+146    	; 0x1e4 <main+0x10a>
-					keyScan1();
+						keyScan1();
  152:	ef d0       	rcall	.+478    	; 0x332 <keyScan1>
-					if (!(FLAG == 1)) {
+						if (!(FLAG == 1)) {
  154:	80 91 9c 00 	lds	r24, 0x009C
  158:	81 30       	cpi	r24, 0x01	; 1
  15a:	51 f0       	breq	.+20     	; 0x170 <main+0x96>
-						KEY2 = KCODE[KEY];
+							KEY2 = KCODE[KEY];
  15c:	80 91 9b 00 	lds	r24, 0x009B
  160:	88 2f       	mov	r24, r24
  162:	90 e0       	ldi	r25, 0x00	; 0
@@ -283,15 +284,15 @@ int main(int argc, char* argv[]) {
  168:	fc 01       	movw	r30, r24
  16a:	80 81       	ld	r24, Z
  16c:	80 93 9a 00 	sts	0x009A, r24
-					}
+						}
 
-					keyScan2();
+						keyScan2();
  170:	26 d1       	rcall	.+588    	; 0x3be <keyScan2>
-					if (!(FLAG == 1)) {
+						if (!(FLAG == 1)) {
  172:	80 91 9c 00 	lds	r24, 0x009C
  176:	81 30       	cpi	r24, 0x01	; 1
  178:	51 f0       	breq	.+20     	; 0x18e <main+0xb4>
-						KEY2 = KCODE[KEY];
+							KEY2 = KCODE[KEY];
  17a:	80 91 9b 00 	lds	r24, 0x009B
  17e:	88 2f       	mov	r24, r24
  180:	90 e0       	ldi	r25, 0x00	; 0
@@ -300,15 +301,15 @@ int main(int argc, char* argv[]) {
  186:	fc 01       	movw	r30, r24
  188:	80 81       	ld	r24, Z
  18a:	80 93 9a 00 	sts	0x009A, r24
-					}
+						}
 
-					keyScan3();
+						keyScan3();
  18e:	5e d1       	rcall	.+700    	; 0x44c <keyScan3>
-					if (!(FLAG == 1)) {
+						if (!(FLAG == 1)) {
  190:	80 91 9c 00 	lds	r24, 0x009C
  194:	81 30       	cpi	r24, 0x01	; 1
  196:	51 f0       	breq	.+20     	; 0x1ac <main+0xd2>
-						KEY2 = KCODE[KEY];
+							KEY2 = KCODE[KEY];
  198:	80 91 9b 00 	lds	r24, 0x009B
  19c:	88 2f       	mov	r24, r24
  19e:	90 e0       	ldi	r25, 0x00	; 0
@@ -317,15 +318,15 @@ int main(int argc, char* argv[]) {
  1a4:	fc 01       	movw	r30, r24
  1a6:	80 81       	ld	r24, Z
  1a8:	80 93 9a 00 	sts	0x009A, r24
-					}
+						}
 
-					keyScan4();
+						keyScan4();
  1ac:	96 d1       	rcall	.+812    	; 0x4da <keyScan4>
-					if (!(FLAG == 1)) {
+						if (!(FLAG == 1)) {
  1ae:	80 91 9c 00 	lds	r24, 0x009C
  1b2:	81 30       	cpi	r24, 0x01	; 1
  1b4:	51 f0       	breq	.+20     	; 0x1ca <main+0xf0>
-						KEY2 = KCODE[KEY];
+							KEY2 = KCODE[KEY];
  1b6:	80 91 9b 00 	lds	r24, 0x009B
  1ba:	88 2f       	mov	r24, r24
  1bc:	90 e0       	ldi	r25, 0x00	; 0
@@ -334,9 +335,9 @@ int main(int argc, char* argv[]) {
  1c2:	fc 01       	movw	r30, r24
  1c4:	80 81       	ld	r24, Z
  1c6:	80 93 9a 00 	sts	0x009A, r24
-					}
+						}
 
-					inputPassword[keyRotate] = KEY2;
+						inputPassword[keyRotate] = KEY2;
  1ca:	20 91 9a 00 	lds	r18, 0x009A
  1ce:	89 81       	ldd	r24, Y+1	; 0x01
  1d0:	9a 81       	ldd	r25, Y+2	; 0x02
@@ -344,18 +345,18 @@ int main(int argc, char* argv[]) {
  1d4:	9f 4f       	sbci	r25, 0xFF	; 255
  1d6:	fc 01       	movw	r30, r24
  1d8:	20 83       	st	Z, r18
-					keyRotate++;
+						keyRotate++;
  1da:	89 81       	ldd	r24, Y+1	; 0x01
  1dc:	9a 81       	ldd	r25, Y+2	; 0x02
  1de:	01 96       	adiw	r24, 0x01	; 1
  1e0:	9a 83       	std	Y+2, r25	; 0x02
  1e2:	89 83       	std	Y+1, r24	; 0x01
-			// a를 누르면 비밀번호 입력 대기 화면
-			if (KCODE[KEY] == 0x0a) {
-				KCODE[KEY] = 0;
-				keyRotate = 0;
-				// 다시 a를 누르면 입력 종료
-				while (!(KCODE[KEY] == 0x0a) || keyRotate < 4) {
+				// a를 누르면 비밀번호 입력 대기 화면
+				if (KCODE[KEY] == 0x0a) {
+					KCODE[KEY] = 0;
+					keyRotate = 0;
+					// 다시 a를 누르면 입력 종료
+					while (!(KCODE[KEY] == 0x0a) || keyRotate < 4) {
  1e4:	80 91 9b 00 	lds	r24, 0x009B
  1e8:	88 2f       	mov	r24, r24
  1ea:	90 e0       	ldi	r25, 0x00	; 0
@@ -373,15 +374,15 @@ int main(int argc, char* argv[]) {
  202:	08 f4       	brcc	.+2      	; 0x206 <main+0x12c>
  204:	a6 cf       	rjmp	.-180    	; 0x152 <main+0x78>
 
-					inputPassword[keyRotate] = KEY2;
-					keyRotate++;
-				}
-				// 입력된 키와 저장된 키가 맞는지 검사
-				for (keyRotate = 0; keyRotate < 4; keyRotate++) {
+						inputPassword[keyRotate] = KEY2;
+						keyRotate++;
+					}
+					// 입력된 키와 저장된 키가 맞는지 검사
+					for (keyRotate = 0; keyRotate < 4; keyRotate++) {
  206:	1a 82       	std	Y+2, r1	; 0x02
  208:	19 82       	std	Y+1, r1	; 0x01
  20a:	20 c0       	rjmp	.+64     	; 0x24c <main+0x172>
-					if (password[keyRotate] == inputPassword[keyRotate]) {
+						if (password[keyRotate] == inputPassword[keyRotate]) {
  20c:	89 81       	ldd	r24, Y+1	; 0x01
  20e:	9a 81       	ldd	r25, Y+2	; 0x02
  210:	80 5a       	subi	r24, 0xA0	; 160
@@ -396,55 +397,55 @@ int main(int argc, char* argv[]) {
  222:	80 81       	ld	r24, Z
  224:	28 17       	cp	r18, r24
  226:	61 f4       	brne	.+24     	; 0x240 <main+0x166>
-						correct = 1;
+							correct = 1;
  228:	81 e0       	ldi	r24, 0x01	; 1
  22a:	90 e0       	ldi	r25, 0x00	; 0
  22c:	90 93 99 00 	sts	0x0099, r25
  230:	80 93 98 00 	sts	0x0098, r24
 
-					inputPassword[keyRotate] = KEY2;
-					keyRotate++;
-				}
-				// 입력된 키와 저장된 키가 맞는지 검사
-				for (keyRotate = 0; keyRotate < 4; keyRotate++) {
+						inputPassword[keyRotate] = KEY2;
+						keyRotate++;
+					}
+					// 입력된 키와 저장된 키가 맞는지 검사
+					for (keyRotate = 0; keyRotate < 4; keyRotate++) {
  234:	89 81       	ldd	r24, Y+1	; 0x01
  236:	9a 81       	ldd	r25, Y+2	; 0x02
  238:	01 96       	adiw	r24, 0x01	; 1
  23a:	9a 83       	std	Y+2, r25	; 0x02
  23c:	89 83       	std	Y+1, r24	; 0x01
  23e:	06 c0       	rjmp	.+12     	; 0x24c <main+0x172>
-					if (password[keyRotate] == inputPassword[keyRotate]) {
-						correct = 1;
-					} else {
-						correct = 0;
+						if (password[keyRotate] == inputPassword[keyRotate]) {
+							correct = 1;
+						} else {
+							correct = 0;
  240:	10 92 99 00 	sts	0x0099, r1
  244:	10 92 98 00 	sts	0x0098, r1
-						break;
+							break;
  248:	00 00       	nop
  24a:	72 c0       	rjmp	.+228    	; 0x330 <__stack+0xd1>
 
-					inputPassword[keyRotate] = KEY2;
-					keyRotate++;
-				}
-				// 입력된 키와 저장된 키가 맞는지 검사
-				for (keyRotate = 0; keyRotate < 4; keyRotate++) {
+						inputPassword[keyRotate] = KEY2;
+						keyRotate++;
+					}
+					// 입력된 키와 저장된 키가 맞는지 검사
+					for (keyRotate = 0; keyRotate < 4; keyRotate++) {
  24c:	89 81       	ldd	r24, Y+1	; 0x01
  24e:	9a 81       	ldd	r25, Y+2	; 0x02
  250:	84 30       	cpi	r24, 0x04	; 4
  252:	91 05       	cpc	r25, r1
  254:	d8 f2       	brcs	.-74     	; 0x20c <main+0x132>
  256:	6c c0       	rjmp	.+216    	; 0x330 <__stack+0xd1>
-						correct = 0;
-						break;
+							correct = 0;
+							break;
+						}
 					}
-				}
-				// e를 누르면 비밀번호 수정 대기 화면
-			} else if (KEY2 == 0x0b) {
+					// e를 누르면 비밀번호 수정 대기 화면
+				} else if (KEY2 == 0x0b) {
  258:	80 91 9a 00 	lds	r24, 0x009A
  25c:	8b 30       	cpi	r24, 0x0B	; 11
  25e:	09 f0       	breq	.+2      	; 0x262 <__stack+0x3>
  260:	67 c0       	rjmp	.+206    	; 0x330 <__stack+0xd1>
-				KCODE[KEY] = 0;
+					KCODE[KEY] = 0;
  262:	80 91 9b 00 	lds	r24, 0x009B
  266:	88 2f       	mov	r24, r24
  268:	90 e0       	ldi	r25, 0x00	; 0
@@ -452,21 +453,21 @@ int main(int argc, char* argv[]) {
  26c:	9f 4f       	sbci	r25, 0xFF	; 255
  26e:	fc 01       	movw	r30, r24
  270:	10 82       	st	Z, r1
-				keyRotate = 0x0b;
+					keyRotate = 0x0b;
  272:	8b e0       	ldi	r24, 0x0B	; 11
  274:	90 e0       	ldi	r25, 0x00	; 0
  276:	9a 83       	std	Y+2, r25	; 0x02
  278:	89 83       	std	Y+1, r24	; 0x01
-				// 다시 a를 누르면 입력 종료
-				while (!(KCODE[KEY] == 0x0b) || keyRotate < 4) {
+					// 다시 a를 누르면 입력 종료
+					while (!(KCODE[KEY] == 0x0b) || keyRotate < 4) {
  27a:	49 c0       	rjmp	.+146    	; 0x30e <__stack+0xaf>
-					keyScan1();
+						keyScan1();
  27c:	5a d0       	rcall	.+180    	; 0x332 <keyScan1>
-					if (!(FLAG == 1)) {
+						if (!(FLAG == 1)) {
  27e:	80 91 9c 00 	lds	r24, 0x009C
  282:	81 30       	cpi	r24, 0x01	; 1
  284:	51 f0       	breq	.+20     	; 0x29a <__stack+0x3b>
-						KEY2 = KCODE[KEY];
+							KEY2 = KCODE[KEY];
  286:	80 91 9b 00 	lds	r24, 0x009B
  28a:	88 2f       	mov	r24, r24
  28c:	90 e0       	ldi	r25, 0x00	; 0
@@ -475,15 +476,15 @@ int main(int argc, char* argv[]) {
  292:	fc 01       	movw	r30, r24
  294:	80 81       	ld	r24, Z
  296:	80 93 9a 00 	sts	0x009A, r24
-					}
+						}
 
-					keyScan2();
+						keyScan2();
  29a:	91 d0       	rcall	.+290    	; 0x3be <keyScan2>
-					if (!(FLAG == 1)) {
+						if (!(FLAG == 1)) {
  29c:	80 91 9c 00 	lds	r24, 0x009C
  2a0:	81 30       	cpi	r24, 0x01	; 1
  2a2:	51 f0       	breq	.+20     	; 0x2b8 <__stack+0x59>
-						KEY2 = KCODE[KEY];
+							KEY2 = KCODE[KEY];
  2a4:	80 91 9b 00 	lds	r24, 0x009B
  2a8:	88 2f       	mov	r24, r24
  2aa:	90 e0       	ldi	r25, 0x00	; 0
@@ -492,15 +493,15 @@ int main(int argc, char* argv[]) {
  2b0:	fc 01       	movw	r30, r24
  2b2:	80 81       	ld	r24, Z
  2b4:	80 93 9a 00 	sts	0x009A, r24
-					}
+						}
 
-					keyScan3();
+						keyScan3();
  2b8:	c9 d0       	rcall	.+402    	; 0x44c <keyScan3>
-					if (!(FLAG == 1)) {
+						if (!(FLAG == 1)) {
  2ba:	80 91 9c 00 	lds	r24, 0x009C
  2be:	81 30       	cpi	r24, 0x01	; 1
  2c0:	51 f0       	breq	.+20     	; 0x2d6 <__stack+0x77>
-						KEY2 = KCODE[KEY];
+							KEY2 = KCODE[KEY];
  2c2:	80 91 9b 00 	lds	r24, 0x009B
  2c6:	88 2f       	mov	r24, r24
  2c8:	90 e0       	ldi	r25, 0x00	; 0
@@ -509,15 +510,15 @@ int main(int argc, char* argv[]) {
  2ce:	fc 01       	movw	r30, r24
  2d0:	80 81       	ld	r24, Z
  2d2:	80 93 9a 00 	sts	0x009A, r24
-					}
+						}
 
-					keyScan4();
+						keyScan4();
  2d6:	01 d1       	rcall	.+514    	; 0x4da <keyScan4>
-					if (!(FLAG == 1)) {
+						if (!(FLAG == 1)) {
  2d8:	80 91 9c 00 	lds	r24, 0x009C
  2dc:	81 30       	cpi	r24, 0x01	; 1
  2de:	51 f0       	breq	.+20     	; 0x2f4 <__stack+0x95>
-						KEY2 = KCODE[KEY];
+							KEY2 = KCODE[KEY];
  2e0:	80 91 9b 00 	lds	r24, 0x009B
  2e4:	88 2f       	mov	r24, r24
  2e6:	90 e0       	ldi	r25, 0x00	; 0
@@ -526,9 +527,9 @@ int main(int argc, char* argv[]) {
  2ec:	fc 01       	movw	r30, r24
  2ee:	80 81       	ld	r24, Z
  2f0:	80 93 9a 00 	sts	0x009A, r24
-					}
+						}
 
-					password[keyRotate] = KEY2;
+						password[keyRotate] = KEY2;
  2f4:	20 91 9a 00 	lds	r18, 0x009A
  2f8:	89 81       	ldd	r24, Y+1	; 0x01
  2fa:	9a 81       	ldd	r25, Y+2	; 0x02
@@ -536,18 +537,18 @@ int main(int argc, char* argv[]) {
  2fe:	9f 4f       	sbci	r25, 0xFF	; 255
  300:	fc 01       	movw	r30, r24
  302:	20 83       	st	Z, r18
-					keyRotate++;
+						keyRotate++;
  304:	89 81       	ldd	r24, Y+1	; 0x01
  306:	9a 81       	ldd	r25, Y+2	; 0x02
  308:	01 96       	adiw	r24, 0x01	; 1
  30a:	9a 83       	std	Y+2, r25	; 0x02
  30c:	89 83       	std	Y+1, r24	; 0x01
-				// e를 누르면 비밀번호 수정 대기 화면
-			} else if (KEY2 == 0x0b) {
-				KCODE[KEY] = 0;
-				keyRotate = 0x0b;
-				// 다시 a를 누르면 입력 종료
-				while (!(KCODE[KEY] == 0x0b) || keyRotate < 4) {
+					// e를 누르면 비밀번호 수정 대기 화면
+				} else if (KEY2 == 0x0b) {
+					KCODE[KEY] = 0;
+					keyRotate = 0x0b;
+					// 다시 a를 누르면 입력 종료
+					while (!(KCODE[KEY] == 0x0b) || keyRotate < 4) {
  30e:	80 91 9b 00 	lds	r24, 0x009B
  312:	88 2f       	mov	r24, r24
  314:	90 e0       	ldi	r25, 0x00	; 0
@@ -564,10 +565,10 @@ int main(int argc, char* argv[]) {
  32a:	91 05       	cpc	r25, r1
  32c:	08 f4       	brcc	.+2      	; 0x330 <__stack+0xd1>
  32e:	a6 cf       	rjmp	.-180    	; 0x27c <__stack+0x1d>
-					password[keyRotate] = KEY2;
-					keyRotate++;
-				}
-			}
+		} else if (X2) {
+		// 4.Heating Gas Valve On/Off Process
+		} else if (X3) {
+
 		}
 	} while (1);
  330:	f4 ce       	rjmp	.-536    	; 0x11a <main+0x40>

@@ -14,6 +14,12 @@
 #define X1 PINB1
 #define X2 PINB2
 #define X3 PINB3
+// RS232 상태 레지스터
+#define    RXC      7 //수신 완료 표시 비트
+#define    TXC      6 //송신 완료 표시 비트
+#define    UDRE     5 //송신 데이터 레지스터 준비 완료 표시 비트
+#define    FE       4 //프레임 에러 표시 비트
+#define    OVR      3
 
 char KCODE[16] = {0x00, 0x04, 0x08, 0x0c, 0x01, 0x05, 0x09, 0x0d, 0x02, 0x06, 0x0a, 0x0e, 0x03, 0x07, 0x0b, 0x0f};
 char SPINANGLE[8] = {0x01, 0x03, 0x02, 0x06, 0x04, 0x0c, 0x08, 0x09};
@@ -50,6 +56,33 @@ unsigned int spinCount, spinStep;
  * Key Matrix codes for ATmega8535.
  * If you want to compile in Eclipse Ubuntu 14.04,remove "__flash" in front of "unsigned".
  */
+int init_rs232(void)
+{
+	//UBRR = 23; //UART Baud Rate Register 3.6854MHz일 경우 9600bps
+	//UCR = 0x18; //UART Control Register -> RXEN, TXEN Enable
+
+	return 0;
+}
+
+// RS232 데이터 송신 함수
+char set_rs232Data(char data)
+{
+	// 데이터가 들어와서 송신 대기 중일때
+ 	while(!UDRE);
+ 	// 데이터 송신
+	UDR = data;
+
+	return 0;
+}
+
+// RS232 데이터 수신 함수
+char get_rs232Data(void)
+{
+	// 수신 확인 레지스터에 데이터가 들어왔을 때
+	while(!RXC);
+	// 데이터 수신
+	return UDR;
+}
 
 int delay(unsigned int i) {
 	while (i--);
@@ -223,7 +256,6 @@ int main(void) {
                 for (k = 0; k < 16; k++) {
                    // CHAR_O(Door_lock2[k]);   // 데이터를 LCD로 데이터 출력
                 }
-			// a를 누르면 비밀번호 입력 대기 화면
 			keyRotate = 0;
 			while (1) 
 			{

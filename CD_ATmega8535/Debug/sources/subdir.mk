@@ -4,19 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../sources/get_rs232.c \
-../sources/main.c \
-../sources/set_doorlock.c 
+../sources/main.c 
 
 OBJS += \
-./sources/get_rs232.o \
-./sources/main.o \
-./sources/set_doorlock.o 
+./sources/main.o 
 
 C_DEPS += \
-./sources/get_rs232.d \
-./sources/main.d \
-./sources/set_doorlock.d 
+./sources/main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

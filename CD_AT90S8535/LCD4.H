@@ -1,6 +1,6 @@
-#define  RS   PORTC5
-#define  RW   PORTC6
-#define  E    PORTC7
+#define  RS   PORTC_Bit5
+#define  RW   PORTC_Bit6
+#define  E    PORTC_Bit7
 // 지연 함수
 void DELAY(unsigned int i)
 {

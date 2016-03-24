@@ -1,10 +1,10 @@
-"\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_ATmega8535\main.c"
+"\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_AT90S8535\main.c"
 -std=c99
 -ferror-limit=100
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\avr\inc
 -I
-C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\avr\inc\dlib\c
+C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\avr\inc\clib
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0

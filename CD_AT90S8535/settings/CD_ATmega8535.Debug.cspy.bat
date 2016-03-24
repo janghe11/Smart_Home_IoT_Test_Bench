@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_ATmega8535\settings\CD_ATmega8535.Debug.general.xcl" --backend -f "\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_ATmega8535\settings\CD_ATmega8535.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_AT90S8535\settings\CD_ATmega8535.Debug.general.xcl" --backend -f "\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_AT90S8535\settings\CD_ATmega8535.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_ATmega8535\settings\CD_ATmega8535.Debug.general.xcl" "--debug_file=%~1" --backend -f "\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_ATmega8535\settings\CD_ATmega8535.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_AT90S8535\settings\CD_ATmega8535.Debug.general.xcl" "--debug_file=%~1" --backend -f "\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_AT90S8535\settings\CD_ATmega8535.Debug.driver.xcl" 
 
 @echo off 
 :end

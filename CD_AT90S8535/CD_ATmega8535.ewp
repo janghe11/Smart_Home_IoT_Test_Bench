@@ -128,11 +128,11 @@
         <option>
           <name>GRuntimeLibSelect</name>
           <version>0</version>
-          <state>0</state>
+          <state>4</state>
         </option>
         <option>
           <name>RTDescription</name>
-          <state>Do not link with a C library.</state>
+          <state>Use the legacy C runtime library.</state>
         </option>
         <option>
           <name>RTConfigPath</name>
@@ -140,7 +140,7 @@
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\LIB\CLIB\cl1t.r90</state>
         </option>
         <option>
           <name>Input variant</name>
@@ -149,7 +149,7 @@
         </option>
         <option>
           <name>Input description</name>
-          <state></state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>Output variant</name>
@@ -158,12 +158,12 @@
         </option>
         <option>
           <name>Output description</name>
-          <state></state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>4</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -722,7 +722,7 @@
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>22</state>
+          <state>23</state>
         </option>
         <option>
           <name>FormatVariant</name>
@@ -917,7 +917,7 @@
         </option>
         <option>
           <name>xcProgramEntryLabelSelect</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>ListOutputFormat</name>

@@ -1,0 +1,19 @@
+"--cpu=m8535" 
+
+"--enhanced_core" 
+
+"-p" 
+
+"C:\Program Files\IAR Systems\Embedded Workbench 7.3\avr\Config\iom8535.ddf" 
+
+"--eeprom_size" 
+
+"512" 
+
+"-d" 
+
+"sim" 
+
+
+
+

@@ -1,10 +1,10 @@
-"\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_AT90S8535\main.c"
+"\\vmware-host\Shared Folders\Shared\Project\CapstoneDesign_MicroProcessor\CD_ATmega8535\main.c"
 -std=c99
 -ferror-limit=100
 -I
-C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\avr\inc
+C:\Program Files\IAR Systems\Embedded Workbench 7.3\avr\inc
 -I
-C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\avr\inc\clib
+C:\Program Files\IAR Systems\Embedded Workbench 7.3\avr\inc\clib
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
@@ -260,10 +260,12 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\avr\inc\clib
 -D__DEF_HEAP_MEM__=__tiny
 -D__PRAGMA_PACK_ON__=1
 -D__MULTIPLE_INHERITANCE__=1
--D__AT90S8535__=1
+-D__ATmega8535__=1
 -D__CORE__=1
 -D__CPU__=1
 -D__HAS_EEPROM__=1
+-D__HAS_ENHANCED_CORE__=1
+-D__HAS_MUL__=1
 -D__ICCAVR__=1
 -D__MEMORY_MODEL__=1
 -D__VERSION_3_CALLS__=1

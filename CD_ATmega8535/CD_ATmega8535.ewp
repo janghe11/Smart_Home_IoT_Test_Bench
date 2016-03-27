@@ -17,7 +17,7 @@
         <debug>1</debug>
         <option>
           <name>GGEnhancedCore</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>Variant Memory</name>
@@ -140,25 +140,25 @@
         </option>
         <option>
           <name>RTLibraryPath</name>
-          <state>$TOOLKIT_DIR$\LIB\CLIB\cl1t.r90</state>
+          <state>$TOOLKIT_DIR$\LIB\CLIB\cl1t-ec_mul.r90</state>
         </option>
         <option>
           <name>Input variant</name>
           <version>36</version>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>Input description</name>
-          <state>Full formatting.</state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>Output variant</name>
           <version>36</version>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>Full formatting.</state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
@@ -213,7 +213,7 @@
         </option>
         <option>
           <name>GenDeviceSelectMenu</name>
-          <state>8535	AT90S8535</state>
+          <state>m8535	ATmega8535</state>
         </option>
       </data>
     </settings>
@@ -324,7 +324,7 @@
         <option>
           <name>CCAllowList</name>
           <version>3</version>
-          <state>000000</state>
+          <state>111111</state>
         </option>
         <option>
           <name>CCCrossCallPassesList</name>
@@ -488,11 +488,11 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>1</state>
+          <state>3</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>1</state>
+          <state>3</state>
         </option>
       </data>
     </settings>
@@ -722,7 +722,7 @@
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>23</state>
+          <state>22</state>
         </option>
         <option>
           <name>FormatVariant</name>
@@ -783,7 +783,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$TOOLKIT_DIR$\src\template\cfg8535.xcl</state>
+          <state>$TOOLKIT_DIR$\src\template\cfgm8535.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>

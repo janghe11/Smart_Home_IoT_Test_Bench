@@ -42,24 +42,32 @@ __flash unsigned char Boiler2[] = "2-Temperature:  ";
 unsigned char r;
 unsigned char LCD[16] = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f };
 
+unsigned char r_control = 0; // Doorlock routine control var
 // 4자리 키를 순서대로 저장하기 위한 변수
 unsigned int insert_array = 0;
-// Save 1 key Row
-unsigned char KEY;
-// Check specific key code
-unsigned char FLAG;
+unsigned char KEY; // Save 1 key Row
+unsigned char FLAG; // Check specific key code
 unsigned char KEY2;
-// Saved password (default is 0000)
-unsigned char check_password[4] = "1234";
+unsigned char check_password[4] = "aaaa"; // Saved password (default is 0000)
 unsigned char set_password[4] = "0000";
-// Check Password (+1 if password is wrong)
-int passwordWrong;
+int passwordWrong; // Check Password (+1 if password is wrong)
 // 비밀번호 * 표시 제어 변수
 int number = 0;
-// Step Motor counts
-unsigned int spinCount, spinStep;
+unsigned int spinCount, spinStep; // Step Motor counts
 
-// Initialize UART
+/* 
+ * ====================RS232 control functions====================
+ * init_rs232 -> Initialize UART
+ * set_rs232_data -> UART transmission (only send status informations)
+ * get_rs232_data -> UART receive (get data and do instructions)
+ * ====================RS232 data variables====================
+ * unsigned char 'u' : Doorlock unlock 
+ * unsigned char 'l' : Doorlock lock
+ * unsigned char 't' : Boiler temp increase
+ * unsigned char 'b' : Boiler temp decrease
+ * unsigned char 'g' : Loosen gas valve
+ * unsigned char 'v' : Fasten gas valve
+ */
 int init_rs232(void)
 {
   UBRR = 23; //UART Baud Rate Register  9600bps in 3.6854MHz
@@ -68,10 +76,6 @@ int init_rs232(void)
   return 0;
 }
 
-/*
-* UART transmission function(informations)
-* 'u' : Doorlock unlocked
-*/
 unsigned char set_rs232_data(unsigned char data)
 {
   // Wait until data is received
@@ -82,11 +86,6 @@ unsigned char set_rs232_data(unsigned char data)
   return 0; 
 }
 
-/*
-* UART receive function(instructions)
-* 'l' : Doorlock lock
-* 
-*/
 unsigned char get_rs232_data(void)
 {
   //  When data recieve complete
@@ -279,9 +278,10 @@ void SCAN4(void)
 int password_checker(void)
 {
   passwordWrong = 0;
+  insert_array = 0;
   // Check insert_array 4 times
   for (char key_array = 0; key_array < 4; key_array++) {
-    if (check_password[key_array] != set_password[key_array])
+    if(check_password[key_array] != set_password[key_array])
       passwordWrong += 1;
   }
   // Password correct = 1
@@ -290,8 +290,6 @@ int password_checker(void)
     return 0;  
   }
   else {
-    // Transmit info (Doorlock is unlocked)
-    //set_rs232_data('u');
     return 1;
   }
 }
@@ -371,68 +369,64 @@ int main(void) {
       for (k = 0; k < 16; k++) {
         CHAR_O(Door_lock2[k]);   // 데이터를 LCD로 데이터 출력
       }
-      // Infiniteloop until password_checker correct
-      insert_array = 0;
-      while (1)
-      {
-        //e 버튼을 눌렀을 경우 새 비밀번호 입력 화면
-        if(SCAN3() == 0x0b)
+      /*
+      * Doorlock routine
+      * 0x0a -> r_control = 1(password check mode) / 0x0b -> r_control = 2(password modify mode) /else -> r_control = 0(normal key scan mode)
+      */
+      if(SCAN3() == 0x0a)
+        r_control = 1;
+      else if(SCAN3 () == 0x0b)
+        r_control = 2;
+      else
+        r_control = 0;
+      
+      // Password modify mode
+      if(r_control == 2) {
+        SCAN();
+        if (!(FLAG == 1)) 
         {
-          // Key가 오작동으로 두번 들어가는 것을 막기 위한 delay
+          KEY2 = KCODE[KEY];
+          // 새로운 패스워드 입력
+          set_password[insert_array] = KEY2;
+          // 디버깅용 PORTD 출력
+          PORTD = 0xf7;
+          insert_array++;
+          // 비밀번호 * 출력 함수  
           delay(60000);
-          insert_array = 0;
-          // a를 누르기 전까지 무한 반복 대기
-          while(1)
-          {
-            SCAN();
-            if (!(FLAG == 1)) 
-            {
-              KEY2 = KCODE[KEY];
-              // 새로운 패스워드 입력
-              set_password[insert_array] = KEY2;
-              // 디버깅용 PORTD 출력
-              PORTD = 0xf7;
-              insert_array++;
-              // 비밀번호 * 출력 함수  
-              delay(60000);
-              // 디버깅용 PORTD 출력
-            }
-            
-            SCAN2();
-            if (!(FLAG == 1)) 
-            {
-              KEY2 = KCODE[KEY];
-              set_password[insert_array] = KEY2;
-              PORTD = 0xfc;
-              insert_array++;
-              delay(60000);
-            }
-            
-            SCAN3();
-            if (!(FLAG == 1)) 
-            {
-              KEY2 = KCODE[KEY];
-              set_password[insert_array] = KEY2;
-              PORTD = 0xf3;
-              insert_array++;
-              delay(60000);
-            }
-            
-            SCAN4();
-            if (!(FLAG == 1)) 
-            {
-              KEY2 = KCODE[KEY];
-              set_password[insert_array] = KEY2;
-              PORTD = 0xff;
-              insert_array++;
-              delay(60000);
-            }
-            // a를 누르면 입력 종료
-            if(SCAN3() == 0x0a)
-              break;
-          }
+          // 디버깅용 PORTD 출력
         }
         
+        SCAN2();
+        if (!(FLAG == 1)) 
+        {
+          KEY2 = KCODE[KEY];
+          set_password[insert_array] = KEY2;
+          PORTD = 0xfc;
+          insert_array++;
+          delay(60000);
+        }
+        
+        SCAN3();
+        if (!(FLAG == 1)) 
+        {
+          KEY2 = KCODE[KEY];
+          set_password[insert_array] = KEY2;
+          PORTD = 0xf3;
+          insert_array++;
+          delay(60000);
+        }
+        
+        SCAN4();
+        if (!(FLAG == 1)) 
+        {
+          KEY2 = KCODE[KEY];
+          set_password[insert_array] = KEY2;
+          PORTD = 0xff;
+          insert_array++;
+          delay(60000);
+        }
+        //Password normal scan mode
+      } else if(r_control == 0) {
         SCAN();
         if (!(FLAG == 1)) 
         {
@@ -441,7 +435,7 @@ int main(void) {
           check_password[insert_array] = KEY2;
           PORTD = 0xf7;
           insert_array++;
-          // Key가 오작동으로 두번 들어가는 것을 막기 위한 delay
+          // Delay not for input same key twice
           delay(60000);
         }
         
@@ -450,7 +444,7 @@ int main(void) {
         {
           KEY2 = KCODE[KEY];
           check_password[insert_array] = KEY2;
-          PORTD = 0xfc;
+          PORTD = 0xfb;
           insert_array++;
           delay(60000);
         }
@@ -474,17 +468,134 @@ int main(void) {
           insert_array++;
           delay(60000);
         }
-        // Press a to stop input
-        if(SCAN3() == 0x0a)
-        {
-          if(password_checker())
-          {
-            spinRight();
-            //한번만 확인이 되면 그 이후부터는 밖에서 키를 눌러도 동작이 되지 않기 때문에 X0 버튼을 내리기 전까지 break을 통해 동작하지 않음.
-            break;
-          }
-        } 
+      } else if(r_control == 1) {
+			if(password_checker()) {
+				PORTD = 0xf7;
+				spinRight();
+				check_password[0] = 'f';
+			} else {
+				insert_array = 0;
+				PORTD = 0xfb;
+			}
+      } else {
+        //nothing
+        delay(60000);	
       }
+      //insert_array = 0;
+      /*
+      while (1)
+      {
+      //e 버튼을 눌렀을 경우 새 비밀번호 입력 화면
+      if(SCAN3() == 0x0b)
+      {
+      // Key가 오작동으로 두번 들어가는 것을 막기 위한 delay
+      delay(60000);
+      insert_array = 0;
+      // a를 누르기 전까지 무한 반복 대기
+      while(1)
+      {
+      SCAN();
+      if (!(FLAG == 1)) 
+      {
+      KEY2 = KCODE[KEY];
+      // 새로운 패스워드 입력
+      set_password[insert_array] = KEY2;
+      // 디버깅용 PORTD 출력
+      PORTD = 0xf7;
+      insert_array++;
+      // 비밀번호 * 출력 함수  
+      delay(60000);
+      // 디버깅용 PORTD 출력
+    }
+      
+      SCAN2();
+      if (!(FLAG == 1)) 
+      {
+      KEY2 = KCODE[KEY];
+      set_password[insert_array] = KEY2;
+      PORTD = 0xfc;
+      insert_array++;
+      delay(60000);
+    }
+      
+      SCAN3();
+      if (!(FLAG == 1)) 
+      {
+      KEY2 = KCODE[KEY];
+      set_password[insert_array] = KEY2;
+      PORTD = 0xf3;
+      insert_array++;
+      delay(60000);
+    }
+      
+      SCAN4();
+      if (!(FLAG == 1)) 
+      {
+      KEY2 = KCODE[KEY];
+      set_password[insert_array] = KEY2;
+      PORTD = 0xff;
+      insert_array++;
+      delay(60000);
+    }
+      // a를 누르면 입력 종료
+      if(SCAN3() == 0x0a)
+      break;
+    }
+    }
+      
+      SCAN();
+      if (!(FLAG == 1)) 
+      {
+      KEY2 = KCODE[KEY];
+      // Insert password checking arrays.
+      check_password[insert_array] = KEY2;
+      PORTD = 0xf7;
+      insert_array++;
+      // Key가 오작동으로 두번 들어가는 것을 막기 위한 delay
+      delay(60000);
+    }
+      
+      SCAN2();
+      if (!(FLAG == 1)) 
+      {
+      KEY2 = KCODE[KEY];
+      check_password[insert_array] = KEY2;
+      PORTD = 0xfc;
+      insert_array++;
+      delay(60000);
+    }
+      
+      SCAN3();
+      if (!(FLAG == 1)) 
+      {
+      KEY2 = KCODE[KEY];
+      check_password[insert_array] = KEY2;
+      PORTD = 0xf3;
+      insert_array++;
+      delay(60000);
+    }
+      
+      SCAN4();
+      if (!(FLAG == 1)) 
+      {
+      KEY2 = KCODE[KEY];
+      check_password[insert_array] = KEY2;
+      PORTD = 0xff;
+      insert_array++;
+      delay(60000);
+    }
+      // Press a to stop input
+      if(SCAN3() == 0x0a)
+      {
+      if(password_checker())
+      {
+      spinRight();
+      //한번만 확인이 되면 그 이후부터는 밖에서 키를 눌러도 동작이 되지 않기 때문에 X0 버튼을 내리기 전까지 break을 통해 동작하지 않음.
+      break;
+    }
+    } 
+    }
+      */
       // 2. Door lock & Step Motor Close Process
     } 
     else if (X1) {

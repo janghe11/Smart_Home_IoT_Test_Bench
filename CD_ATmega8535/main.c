@@ -24,7 +24,7 @@
 // Doorlock Keyscan speed control
 #define SCAN_SPEED      6000
 #define ENABLE	        1
-#define DISABLE	0
+#define DISABLE			0
 
 __flash unsigned char KCODE[16] = {0x00, 0x04, 0x08, 0x0c, 0x01, 0x05, 0x09, 0x0d, 0x02, 0x06, 0x0a, 0x0e, 0x03, 0x07, 0x0b, 0x0f};
 __flash unsigned char SPINANGLE[8] = {0x10, 0x30, 0x20, 0x60, 0x40, 0xc0, 0x80, 0x90};
@@ -36,6 +36,10 @@ unsigned char msg2[]="PUSH Button Plz ";
 // 1.도어락 OPEN LCD 출력 화면
 __flash unsigned char Door_lock1[] = "1-Door Lock Fun?";
 __flash unsigned char Door_lock2[] = "2-PASSWORD :    ";
+
+// 2.패스워드 일치 언락 출력 화면
+__flash unsigned char Un_lock1[] = " PASSWORD  MATCH";
+__flash unsigned char Un_lock2[] = " ** Door OPEN **";
 
 // 3.보일러 LCD 출력 화면
 __flash unsigned char Boiler1[] = "1-Boiler Fun?   ";
@@ -156,20 +160,36 @@ int rs232_get_command(unsigned char data)
 }
 
 void doorlock(void) {
-	// LCD Display -> Door lock and Password
-	// LCD 클리어
-	COMMAND(0x01);
-	// 1라인 데이터 출력
-	COMMAND(0x02);  // 커서를 홈으로 셋
-	for (k = 0; k < 16; k++) {
-		CHAR_O(Door_lock1[k]);   // 데이터를 LCD로 데이터 출력
-	}
-	// 2라인 데이터 출력
-	COMMAND(0xc0);  // 커서를 라인 2로 셋
-	for (k = 0; k < 16; k++) {
-		CHAR_O(Door_lock2[k]);   // 데이터를 LCD로 데이터 출력
-	}
-        door_lcd=1;
+  // LCD Display -> Door lock and Password
+  // LCD 클리어
+  COMMAND(0x01);
+  // 1라인 데이터 출력
+  COMMAND(0x02);  // 커서를 홈으로 셋
+  for (k = 0; k < 16; k++) {
+    CHAR_O(Door_lock1[k]);   // 데이터를 LCD로 데이터 출력
+  }
+  // 2라인 데이터 출력
+  COMMAND(0xc0);  // 커서를 라인 2로 셋
+  for (k = 0; k < 16; k++) {
+    CHAR_O(Door_lock2[k]);   // 데이터를 LCD로 데이터 출력
+  }
+  door_lcd=1;
+}
+
+void door_unlock(void) {
+  // LCD 클리어
+  COMMAND(0x01);
+  // 1라인 데이터 출력
+  COMMAND(0x02);  // 커서를 홈으로 셋
+  for (k = 0; k < 16; k++) {
+    CHAR_O(Un_lock1[k]);   // 데이터를 LCD로 데이터 출력
+  }
+  // 2라인 데이터 출력
+  COMMAND(0xc0);  // 커서를 라인 2로 셋
+  for (k = 0; k < 16; k++) {
+    CHAR_O(Un_lock2[k]);   // 데이터를 LCD로 데이터 출력
+  }
+  number=0;
 }
 
 
@@ -232,6 +252,7 @@ int spinLeft(void) {
 
 // Rotate Step Motor 180 right
 int spinRight(void) {
+  door_unlock();
   spinCount = 200;
   spinStep = 0;
   do {
@@ -305,7 +326,7 @@ unsigned char SCAN3(void)
     KEY++;
   }
   KEY = key1 & 0x0f;
-
+  
   
   return KCODE[KEY];
 }
@@ -350,11 +371,6 @@ int password_checker(void)
       delay(60000);
     } else {
       passwordWrong = 0;
-      	COMMAND(0xc0); 
-	for (k = 0; k < 16; k++) {
-		CHAR_O(Door_lock2[k]);
-	}
-        number=0;
       break;
     }
   }
@@ -446,21 +462,21 @@ int main(void) {
     //1. Doorlock & Step Motor Open Process
     
     if(!X0) {
-    door_lcd = 0;
-    number = 0;
+      door_lcd = 0;
+      number = 0;
     }
     
     if (X0) {
       //unsigned char k;
-	  
-	  
+      
+      
       // X0 Enable Debug LED Off
       PORTD = 0xff;
-	  
-	  if(door_lcd==0) {
-		doorlock();
-	  }
-
+      
+      if(door_lcd==0) {
+        doorlock();
+      }
+      
       /*
       * Doorlock routine
       * modify_password ENABLE -> password modify mode
@@ -482,13 +498,13 @@ int main(void) {
           if(insert_array == 4) {
             modify_password = DISABLE;
             PORTD = 0xf3;
-			delay(60000);
-			PORTD = 0xf3;
-			delay(60000);
-			PORTD = 0xfb;
-			delay(60000);
-			PORTD = 0xfb;
-			delay(60000);
+            delay(60000);
+            PORTD = 0xf3;
+            delay(60000);
+            PORTD = 0xfb;
+            delay(60000);
+            PORTD = 0xfb;
+            delay(60000);
           }
           
           SCAN();

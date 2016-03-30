@@ -22,7 +22,7 @@
 #define    RXC      USR_Bit7
 
 // Doorlock Keyscan speed control
-#define SCAN_SPEED      290
+#define SCAN_SPEED      6000
 #define ENABLE	        1
 #define DISABLE	0
 
@@ -43,6 +43,11 @@ __flash unsigned char Boiler2[] = "2-Temperature:  ";
 
 
 #include "LCD4.h"
+// 제어 변수
+unsigned char k;
+// Door Lock LCD 제어 변수
+unsigned char door_lcd;
+
 // Rotary 포트B의 입력핀 어드레스 받는 변수와 제어하는 변수
 unsigned char r;
 unsigned char LCD[16] = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f };
@@ -58,7 +63,7 @@ unsigned char FLAG; // Check specific key code
 unsigned char KEY2;
 unsigned int delay_count = SCAN_SPEED; //delay count for key scan (280 is ideal)
 unsigned char check_password[] = {0x0f, 0x0f, 0x0f, 0x0f}; // Saved password (default is ffff)
-unsigned char set_password[] = {0x01, 0x02, 0x03, 0x04};
+unsigned char set_password[] = {0x04, 0x05, 0x06, 0x07};
 int passwordWrong; // Check Password (+1 if password is wrong)
 // 비밀번호 * 표시 제어 변수
 int number = 0;
@@ -150,29 +155,42 @@ int rs232_get_command(unsigned char data)
   return 0;
 }
 
+void doorlock(void) {
+	// LCD Display -> Door lock and Password
+	// LCD 클리어
+	COMMAND(0x01);
+	// 1라인 데이터 출력
+	COMMAND(0x02);  // 커서를 홈으로 셋
+	for (k = 0; k < 16; k++) {
+		CHAR_O(Door_lock1[k]);   // 데이터를 LCD로 데이터 출력
+	}
+	// 2라인 데이터 출력
+	COMMAND(0xc0);  // 커서를 라인 2로 셋
+	for (k = 0; k < 16; k++) {
+		CHAR_O(Door_lock2[k]);   // 데이터를 LCD로 데이터 출력
+	}
+        door_lcd=1;
+}
+
+
 // 비밀번호 **** lcd 출력 함수
-int encryption(void) {
+void encryption(void) {
   if(number==0){
     COMMAND(0xcc);
     CHAR_O(0x2A);
-    delay(65000);
   }
   else if(number==1) {
     COMMAND(0xcd);
     CHAR_O(0x2A);
-    delay(65000);
   }
   else if(number==2) {
     COMMAND(0xce);
     CHAR_O(0x2A);
-    delay(65000);
   }
   else { // (number==3)
     COMMAND(0xcf);
     CHAR_O(0x2A);
-    delay(65000);
   }
-  return 0;
 }
 
 void boiler(void) {
@@ -246,10 +264,6 @@ void SCAN(void)
     KEY++;
   }
   KEY = key1 & 0x0f;
-  // Key가 오작동으로 두번 들어가는 것을 막기 위한 delay
-  //encryption();
-  // 비밀번호 자리 제어 하기 위한 변수
-  //number++;
 }
 
 void SCAN2(void)
@@ -271,8 +285,6 @@ void SCAN2(void)
     KEY++;
   }
   KEY = key1 & 0x0f;
-  //encryption();
-  //number++;
 }
 
 unsigned char SCAN3(void)
@@ -293,8 +305,7 @@ unsigned char SCAN3(void)
     KEY++;
   }
   KEY = key1 & 0x0f;
-  //encryption();
-  //number++;
+
   
   return KCODE[KEY];
 }
@@ -317,8 +328,6 @@ void SCAN4(void)
     KEY++;
   }
   KEY = key1 & 0x0f;
-  //encryption();
-  //number++;
 }
 
 int password_checker(void)
@@ -341,6 +350,11 @@ int password_checker(void)
       delay(60000);
     } else {
       passwordWrong = 0;
+      	COMMAND(0xc0); 
+	for (k = 0; k < 16; k++) {
+		CHAR_O(Door_lock2[k]);
+	}
+        number=0;
       break;
     }
   }
@@ -430,23 +444,23 @@ int main(void) {
     rs232_get_command(data);
     r = PINB; // r이라는 상수에 포트B의 입력핀 어드레스를 넣는다.
     //1. Doorlock & Step Motor Open Process
+    
+    if(!X0) {
+    door_lcd = 0;
+    number = 0;
+    }
+    
     if (X0) {
-      unsigned char k;
+      //unsigned char k;
+	  
+	  
       // X0 Enable Debug LED Off
       PORTD = 0xff;
-      // LCD Display -> Door lock and Password
-      // LCD 클리어
-      COMMAND(0x01);
-      // 1라인 데이터 출력
-      COMMAND(0x02);  // 커서를 홈으로 셋
-      for (k = 0; k < 16; k++) {
-        CHAR_O(Door_lock1[k]);   // 데이터를 LCD로 데이터 출력
-      }
-      // 2라인 데이터 출력
-      COMMAND(0xc0);  // 커서를 라인 2로 셋
-      for (k = 0; k < 16; k++) {
-        CHAR_O(Door_lock2[k]);   // 데이터를 LCD로 데이터 출력
-      }
+	  
+	  if(door_lcd==0) {
+		doorlock();
+	  }
+
       /*
       * Doorlock routine
       * modify_password ENABLE -> password modify mode
@@ -457,7 +471,7 @@ int main(void) {
       }
       
       if(delay_count == 0) {
-        if(SCAN3() == 0x0a) {
+        if(insert_array > 3) {
           password_checker();
         } else if(SCAN3 () == 0x0b) {
           modify_password = ENABLE;
@@ -524,6 +538,8 @@ int main(void) {
             PORTD = 0xf7;
             insert_array++;
             delay_count = SCAN_SPEED;
+            encryption();
+            number++;
           }
           
           SCAN2();
@@ -533,6 +549,8 @@ int main(void) {
             PORTD = 0xfb;
             insert_array++;
             delay_count = SCAN_SPEED;
+            encryption();
+            number++;
           }
           
           SCAN3();
@@ -543,6 +561,8 @@ int main(void) {
             PORTD = 0xf3;
             insert_array++;
             delay_count = SCAN_SPEED;
+            encryption();
+            number++;
           }
           
           SCAN4();
@@ -553,6 +573,8 @@ int main(void) {
             PORTD = 0xff;
             insert_array++;
             delay_count = SCAN_SPEED;
+            encryption();
+            number++;
           }	
         }
       }

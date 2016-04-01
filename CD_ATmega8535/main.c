@@ -45,6 +45,7 @@ __flash unsigned char Un_lock2[] = " ** Door OPEN **";
 __flash unsigned char Boiler1[] = "1-Boiler Fun?   ";
 __flash unsigned char Boiler2[] = "2-Temperature:  ";
 
+__flash unsigned char KeyChange[] = "PWD Modified";
 
 #include "LCD4.h"
 // 제어 변수
@@ -58,16 +59,14 @@ unsigned char LCD[16] = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a
 
 unsigned char data = 0; // RS232 UART UDR data input / output
 
-unsigned char modify_password = 0;
-int pwd_check_array = 0; // password_checker func check array var
-// 4자리 키를 순서대로 저장하기 위한 변수
-unsigned char insert_array = 0;
+//unsigned char modify_password = 0;
+unsigned char pwd_check_array = 0; // check password insert array
 unsigned char KEY; // Save 1 key Row
 unsigned char FLAG; // Check specific key code
 unsigned char KEY2;
-unsigned int delay_count = SCAN_SPEED; //delay count for key scan (280 is ideal)
-unsigned char check_password[] = {0x0f, 0x0f, 0x0f, 0x0f}; // Saved password (default is ffff)
-unsigned char set_password[] = {0x04, 0x05, 0x06, 0x07};
+unsigned int delay_count = SCAN_SPEED; //delay count for key scan
+unsigned char check_password[4] = {0x0f, 0x0f, 0x0f, 0x0f}; // Saved password (default is ffff)
+unsigned char set_password[4] = {0x04, 0x05, 0x06, 0x07};
 int passwordWrong; // Check Password (+1 if password is wrong)
 // 비밀번호 * 표시 제어 변수
 int number = 0;
@@ -354,12 +353,10 @@ void SCAN4(void)
 int password_checker(void)
 {
   passwordWrong = 0;
-  insert_array = 0;
-  //c_control = 0;
-  //m_control = 0;
-  // Check insert_array 4 times
-  for (pwd_check_array = 0; pwd_check_array < 4; pwd_check_array++) {
-    if(check_password[pwd_check_array] == set_password[pwd_check_array]) {
+  pwd_check_array = 0;
+  // Check pwd_check_array 4 times
+  for (unsigned char pwd_match_array = 0; pwd_match_array < 4; pwd_match_array++) {
+    if(check_password[pwd_match_array] == set_password[pwd_match_array]) {
       passwordWrong = 1;
       PORTD = 0xf7;
       delay(60000);
@@ -376,8 +373,8 @@ int password_checker(void)
   }
   
   // Insert dummy values after checking
-  for (pwd_check_array = 0; pwd_check_array < 4; pwd_check_array++)  {
-    check_password[pwd_check_array] = 'f';
+  for (unsigned char pwd_match_array = 0; pwd_match_array < 4; pwd_match_array++)  {
+    check_password[pwd_check_array] = 0x0f;
   }
   
   // Password correct = 1
@@ -464,14 +461,11 @@ int main(void) {
     if(!X0) {
       door_lcd = 0;
       number = 0;
+      pwd_check_array = 0; // Execute only when Key Matrix scan
     }
     
     if (X0) {
-      //unsigned char k;
-      
-      
-      // X0 Enable Debug LED Off
-      PORTD = 0xff;
+      PORTD = 0xff; // X0 Enable Debug LED Off
       
       if(door_lcd==0) {
         doorlock();
@@ -480,6 +474,7 @@ int main(void) {
       /*
       * Doorlock routine
       * modify_password ENABLE -> password modify mode
+      * modify_mode : 0 -> normal scan, 1 -> set password mode, 2 -> check password mode
       */
       if(delay_count > 0) 
       {
@@ -487,112 +482,76 @@ int main(void) {
       }
       
       if(delay_count == 0) {
-        if(insert_array > 3) {
-          password_checker();
-        } else if(SCAN3 () == 0x0b) {
-          modify_password = ENABLE;
-          insert_array = 0;
+        // normal password check input mode
+        SCAN();
+        if (!(FLAG == 1)) {
+          KEY2 = KCODE[KEY];
+          check_password[pwd_check_array] = KEY2;
+          PORTD = 0xf7;
+          pwd_check_array++;
+          delay_count = SCAN_SPEED;
+          encryption();
+          number++;
         }
         
-        if(modify_password) {
-          if(insert_array == 4) {
-            modify_password = DISABLE;
-            PORTD = 0xf3;
-            delay(60000);
-            PORTD = 0xf3;
-            delay(60000);
-            PORTD = 0xfb;
-            delay(60000);
-            PORTD = 0xfb;
-            delay(60000);
-          }
-          
-          SCAN();
-          if (!(FLAG == 1)) {
-            KEY2 = KCODE[KEY];
-            // Insert password checking arrays.
-            set_password[insert_array] = KEY2;
-            PORTD = 0xf7;
-            insert_array++;
-            delay_count = SCAN_SPEED;
-          }
-          
-          SCAN2();
-          if (!(FLAG == 1)) {
-            KEY2 = KCODE[KEY];
-            set_password[insert_array] = KEY2;
-            PORTD = 0xfb;
-            insert_array++;
-            delay_count = SCAN_SPEED;
-          }
-          
-          SCAN3();
-          if (!(FLAG == 1)) 
-          {
-            KEY2 = KCODE[KEY];
-            set_password[insert_array] = KEY2;
-            PORTD = 0xf3;
-            insert_array++;
-            delay_count = SCAN_SPEED;
-          }
-          
-          SCAN4();
-          if (!(FLAG == 1)) 
-          {
-            KEY2 = KCODE[KEY];
-            set_password[insert_array] = KEY2;
-            PORTD = 0xff;
-            insert_array++;
-            delay_count = SCAN_SPEED;
-          }	
-        } else {
-          SCAN();
-          if (!(FLAG == 1)) {
-            KEY2 = KCODE[KEY];
-            // Insert password checking arrays.
-            check_password[insert_array] = KEY2;
-            PORTD = 0xf7;
-            insert_array++;
-            delay_count = SCAN_SPEED;
-            encryption();
-            number++;
-          }
-          
-          SCAN2();
-          if (!(FLAG == 1)) {
-            KEY2 = KCODE[KEY];
-            check_password[insert_array] = KEY2;
-            PORTD = 0xfb;
-            insert_array++;
-            delay_count = SCAN_SPEED;
-            encryption();
-            number++;
-          }
-          
-          SCAN3();
-          if (!(FLAG == 1)) 
-          {
-            KEY2 = KCODE[KEY];
-            check_password[insert_array] = KEY2;
-            PORTD = 0xf3;
-            insert_array++;
-            delay_count = SCAN_SPEED;
-            encryption();
-            number++;
-          }
-          
-          SCAN4();
-          if (!(FLAG == 1)) 
-          {
-            KEY2 = KCODE[KEY];
-            check_password[insert_array] = KEY2;
-            PORTD = 0xff;
-            insert_array++;
-            delay_count = SCAN_SPEED;
-            encryption();
-            number++;
-          }	
+        SCAN2();
+        if (!(FLAG == 1)) {
+          KEY2 = KCODE[KEY];
+          check_password[pwd_check_array] = KEY2;
+          PORTD = 0xfb;
+          pwd_check_array++;
+          delay_count = SCAN_SPEED;
+          encryption();
+          number++;
         }
+        
+        SCAN3();
+        if (!(FLAG == 1)) {
+          KEY2 = KCODE[KEY];
+          if((KEY2 == 0x02) || (KEY2 == 0x06)) {
+            check_password[pwd_check_array] = KEY2;
+            PORTD = 0xf3;
+            pwd_check_array++;
+            delay_count = SCAN_SPEED;
+            encryption();
+            number++;
+          } else if(KEY2 == 0x0a) {
+            password_checker();
+            delay_count = SCAN_SPEED;
+          } else if(KEY2 == 0x0e) {
+            PORTD = 0xf3;
+            for(unsigned char pwd_set_array = 0; pwd_set_array < 4; pwd_set_array++) {
+              set_password[pwd_set_array] = check_password[pwd_set_array];
+            }
+            
+            // LCD 클리어
+            COMMAND(0x01);
+            // 1라인 데이터 출력
+            COMMAND(0x02);  // 커서를 홈으로 셋
+            for (k = 0; k < 16; k++) {
+              CHAR_O(Door_lock1[k]);   // 데이터를 LCD로 데이터 출력
+            }
+            // 2라인 데이터 출력
+            COMMAND(0xc0);  // 커서를 라인 2로 셋
+            for (k = 0; k < 16; k++) {
+              CHAR_O(KeyChange[k]);   // 데이터를 LCD로 데이터 출력
+            }
+            number=0;
+            delay_count = SCAN_SPEED;
+            
+          }
+        }
+        
+        SCAN4();
+        if (!(FLAG == 1)) {
+          KEY2 = KCODE[KEY];
+          check_password[pwd_check_array] = KEY2;
+          PORTD = 0xf3;
+          pwd_check_array++;
+          delay_count = SCAN_SPEED;
+          encryption();
+          number++;
+        }	
       }
     } 
     // 2. Door lock & Step Motor Close Process

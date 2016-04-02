@@ -65,8 +65,8 @@ unsigned char KEY; // Save 1 key Row
 unsigned char FLAG; // Check specific key code
 unsigned char KEY2;
 unsigned int delay_count = SCAN_SPEED; //delay count for key scan
-unsigned char check_password[4] = {0x0f, 0x0f, 0x0f, 0x0f}; // Saved password (default is ffff)
-unsigned char set_password[4] = {0x04, 0x05, 0x06, 0x07};
+unsigned char check_password[] = {0x0f, 0x0f, 0x0f, 0x0f}; // Saved password (default is ffff)
+unsigned char set_password[] = {0x04, 0x05, 0x06, 0x07};
 int passwordWrong; // Check Password (+1 if password is wrong)
 // 비밀번호 * 표시 제어 변수
 int number = 0;
@@ -523,6 +523,8 @@ int main(void) {
             for(unsigned char pwd_set_array = 0; pwd_set_array < 4; pwd_set_array++) {
               set_password[pwd_set_array] = check_password[pwd_set_array];
             }
+            pwd_check_array = 0;
+            delay_count = SCAN_SPEED;
             
             // LCD 클리어
             COMMAND(0x01);
@@ -537,8 +539,6 @@ int main(void) {
               CHAR_O(KeyChange[k]);   // 데이터를 LCD로 데이터 출력
             }
             number=0;
-            delay_count = SCAN_SPEED;
-            
           }
         }
         

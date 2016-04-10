@@ -436,7 +436,7 @@ int main(void) {
   /*
   * DDRA : Keypad C0 ~ C3 (Output PA0 ~ PA3), L0 ~ L3 (Input PA4 ~ PA7)
   * DDRB : Rotary Switch (Input PB0 ~ PB3), Switch (Input PB4 ~ PB7) 
-  * DDRC : Character LCD (Output (D4~D7) PC0 ~ PC3  (RW,RW,E) PC5 ~ PC7 ), Speaker (Output PC4) 
+  * DDRC : Character LCD (Output D4~D7 (PC3 ~ PC0)  E,RW,RS (PC7 ~ PC5)), Speaker (Output PC4) 
   * DDRD : Step motor (Output PD7 ~ PD4), Debug LED (Output PD3, PD2), UART (TXD Output PD1 RXD Input PD0)
   */
   DDRA = 0x0f;

@@ -30,3 +30,4 @@
 
 # Debug files
 *.dSYM/
+/CD_RaspberryPi2/public_html/php_control/nbproject/private/

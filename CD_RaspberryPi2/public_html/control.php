@@ -14,7 +14,7 @@
     $avrDevId = "/dev/ttyUSB0"; // Device location of AVR USB
     $avrBoilerTemp = null;
 
-    function rpiAndCommCheck($andComm)
+    function rpiAndCommCheck($andComm, $avrBoilerTemp, $errorCheck)
     {
         switch($andComm) {
             case 'u':
@@ -22,25 +22,39 @@
             case 'l':
                 break;
             case 't':
-                // Temp Check
+                if(($avrBoilerTemp < 18) || ($avrBoilerTemp > 30)) {
+                    echo("Couldn't receive boiler temperature from android.\n");
+                    $andComm = null;
+                    $avrBoilerTemp = null;
+                    $errorCheck = 1;
+                }
                 break;
             case 'b':
-                // Temp Check
+                if(($avrBoilerTemp < 18) || ($avrBoilerTemp > 30)) {
+                    echo("Couldn't receive boiler temperature from android.\n");
+                    $andComm = null;   
+                    $avrBoilerTemp = null;
+                    $errorCheck = 1;
+                }
                 break;
             case 'g':
                 break;
             case 'v':
                 break;
             default:
-                echo("Android commnad token to AVR error \n");
+                echo("Android commnad token to AVR error.\n");
                 $andComm = null;
                 $errorCheck = 1;
         }
     }
 
-    function avrSetComm($andComm, $avrDevId)
+    function avrSetComm($andComm, $avrBoilerTemp, $avrDevId)
     {
         $avrSendComm = "echo $andComm >> $avrDevId"; // Make command to AVR
+        exec($avrSendComm); // Send data to AVR
+        
+        if($avrBoilerTemp != null)
+            $avrSendComm = "echo $avrBoilerTemp >> $avrDevId"; // Make boiler temperature command to AVR
         exec($avrSendComm); // Send data to AVR
     }
 

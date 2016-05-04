@@ -144,8 +144,8 @@ C:\Program Files\IAR Systems\Embedded Workbench 7.3\avr\inc\clib
 -D__JMP_BUF_NUM_ELEMENTS__=22
 -D__TID__=0x5a11
 -D__VER__=670
--D__SUBVERSION__=2
--D__BUILD_NUMBER__=989
+-D__SUBVERSION__=5
+-D__BUILD_NUMBER__=1028
 -D__IAR_SYSTEMS_ICC__=8
 -D__VA_STACK_DECREASING__=1
 -D__VA_STACK_ALIGN__=1
@@ -299,7 +299,7 @@ C:\Program Files\IAR Systems\Embedded Workbench 7.3\avr\inc\clib
 -D__EDG_SYSV=0
 -D__EDG_ANSIC=1
 -D__EDG_CPP11_IL_EXTENSIONS_SUPPORTED=1
--D__VERSION__="IAR C/C++ Compiler V6.70.2.989 for Atmel AVR"
+-D__VERSION__="IAR C/C++ Compiler V6.70.5.1028 for Atmel AVR"
 -D__CODE_MEMORY_LIST1__()=__CODE_MEM_HELPER1__(__code, 0 )
 -D__CODE_MEMORY_LIST2__(_P1)=__CODE_MEM_HELPER2__(__code, 0 ,  _P1 )
 -D__CODE_MEMORY_LIST3__(_P1, _P2)=__CODE_MEM_HELPER3__(__code, 0 ,  _P1 ,  _P2 )

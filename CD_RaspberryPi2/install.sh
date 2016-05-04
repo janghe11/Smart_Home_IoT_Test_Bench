@@ -12,9 +12,11 @@ if [ "$UID" -ne "$ROOT_UID" ] ; then
 	exit 1
 fi
 
+echo "Start to install Smart Home IoT on Raspberry Pi. It takes 25 minutes...\n"
+
 apt-get update
 apt-get -y dist-upgrade
-apt-get install -y vim gcc apache2 php5 mariadb-server php5-mysql phpmyadmin git
+apt-get install -y vim gcc apache2 php5 mariadb-server php5-mysql phpmyadmin git libmysqlclient-dev
 
 mkdir /home/pi/public_html 
 chown pi:pi /home/pi/public_html
@@ -33,11 +35,15 @@ chown root:root /etc/apache2/sites-available/apache2.conf
 #echo "        psk="capstonemp12"" >> /etc/wpa_supplicant/wpa_supplicant.conf
 #echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf
 
-\cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/netdata /home/pi/public_html
+\cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/netdata /home/pi/public_html/
 chown www-data:www-data -R /home/pi/public_html/netdata
 
 \cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/control.php /home/pi/public_html
 chown pi:pi /home/pi/public_html/control.php
 
-reboot
+apt-get autoremove
+apt-get autoclean
 
+echo"Smart Home IoT on Raspberry Pi installated successfully. Try to reboot...\n"
+
+reboot

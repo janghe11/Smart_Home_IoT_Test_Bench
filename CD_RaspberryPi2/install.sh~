@@ -56,7 +56,7 @@ chown pi:pi /home/pi/public_html/control.php
 #echo "        psk="capstonemp12"" >> /etc/wpa_supplicant/wpa_supplicant.conf
 #echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf
 
-# Add control.php and avr_daemon daemon to /etc/init.d
+# Add control.php and avr_daemon daemon
 
 # Cleaning and finish
 apt-get autoremove

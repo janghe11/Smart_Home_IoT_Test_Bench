@@ -22,17 +22,16 @@ apt-get -y dist-upgrade
 apt-get install -y vim gcc apache2 php5 git libmysqlclient-dev
 
 # MariaDB install
-debconf-set-selections <<< 'mariadb-server mariadb-server/root_password password raspberry'
-debconf-set-selections <<< 'mariadb-server mariadb-server/root_password_again password raspberry'
+echo "mariadb-server-10.0 mariadb-server/root_password password raspberry" | debconf-set-selections
+echo "mariadb-server-10.0 mariadb-server/root_password_again password raspberry" | debconf-set-selections
 apt-get install -y mariadb-server php5-mysql
 
 # PhpMyAdmin install
-debconf-set-selections <<< 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2'
-debconf-set-selections <<< 'phpmyadmin phpmyadmin/dbconfig-install boolean true'
-debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/admin-user string root'
-debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/admin-pass password raspberry'
-debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/app-pass password raspberry'
-debconf-set-selections <<< 'phpmyadmin phpmyadmin/app-password-confirm password raspberry'
+echo 'phpmyadmin phpmyadmin/dbconfig-install boolean true' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/app-password-confirm password raspberry' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/mysql/admin-pass password raspberry' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/mysql/app-pass password raspberry' | debconf-set-selections
+echo 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2' | debconf-set-selections
 apt-get install -y phpmyadmin
 
 # Download required sources from github
@@ -74,7 +73,7 @@ echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf
 # Add control.php and avr_daemon daemon to /etc/init.d
 
 # Cleaning and finish
-apt-get autoremove
+apt-get -y autoremove
 apt-get autoclean
 
 echo"Smart Home IoT Test Bench on Raspberry Pi installated successfully. Try to reboot...\n"

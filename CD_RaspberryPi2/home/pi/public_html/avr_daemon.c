@@ -34,7 +34,7 @@ int avr_maria_set(int avr_get_count, char avr_read_content)
 	
 	// Get Raspberry Pi server time and generate cid.
 	cid_timestamp = localtime(&server_time);
-	sprintf(cid, "%sd%04d%02d%02d%02d%02d%02dc%d", cid_model_name, cid_timestamp->tm_year + 1900, cid_timestamp->tm_mon + 1, cid_timestamp->tm_mday, 
+	sprintf(cid, "%sd%04d%02d%02d%02d%02d%02dc%04d", cid_model_name, cid_timestamp->tm_year + 1900, cid_timestamp->tm_mon + 1, cid_timestamp->tm_mday, 
 													cid_timestamp->tm_hour, cid_timestamp->tm_min, cid_timestamp->tm_sec, avr_get_count);
 	
 	// Establish mariadb connection and insert values to rpi_avr table.

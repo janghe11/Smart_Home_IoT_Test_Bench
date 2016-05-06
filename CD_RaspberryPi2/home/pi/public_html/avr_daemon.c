@@ -7,40 +7,67 @@
 #include <termios.h>                   
 #include <fcntl.h>
 #include <mysql.h>
+#include <time.h>
 
-#define CHECKING_TIME 1000								// Manipulate poll time out.
+#define CHECKING_TIME 	1000							// Manipulate poll time out.
 
-#define MARIA_HOST	"127.0.0.1"
-#define MARIA_USER	"root"
-#define MARIA_PASS	"raspberry"
+#define MARIA_HOST		"127.0.0.1"
+#define MARIA_USER		"root"
+#define MARIA_PASS		"raspberry"
 #define MARIA_DATABASE	"and_rpi_avr"
-#define RPI_CLIENT_ID	"capstonemp12d160422r002"
-#define RPI_ID	"rpi2d160423w10"
-#define AVR_ID	"avr8535d160423w04"
+#define CLIENT_ID		"capstonemp12d160422r002"
+#define RPI_ID			"rpi2d160423w10"
+#define AVR_ID			"avr8535d160423w04"
 
 
-int avr_mysql_set(void) 
+int avr_maria_set(int avr_get_count, char avr_read_content) 
 {
-	int avr_maria_set;
-	char rpi_client_id[23] = {'\0'};
-	char avr_read_content = 0;							// Receive data from AVR
+	int rpi_query_check = -1;							// Check query is proceeded (Fail : -1, Proceeded : 0)
+	int query_retry_count = 0;							// Plus count when mysql_query is failed (Maximum : 5)
+	char cid[30] = {'\0'};								// Command ID (Primary key of table)
 	char avr_boiler_temp[2] = {0};						// Insert boiler temp to database
 	char avr_query_statement[1024];						// Set AVR query to insert
 	
+	time_t server_time = time(NULL);					// Get current time function
+	struct tm *cid_timestamp;							// Get each year, month, day, hour, min, sec from time function (defined in time.h)
+	char cid_model_name[10] = "gal5";					// Device name which sent data to RPi
+	
+	// Get Raspberry Pi server time and generate cid.
+	cid_timestamp = localtime(&server_time);
+	sprintf(cid, "%sd%04d%02d%02d%02d%02d%02dc%d", cid_model_name, cid_timestamp->tm_year + 1900, cid_timestamp->tm_mon + 1, cid_timestamp->tm_mday, 
+													cid_timestamp->tm_hour, cid_timestamp->tm_min, cid_timestamp->tm_sec, avr_get_count);
+	
+	// Establish mariadb connection and insert values to rpi_avr table.
 	MYSQL avr_maria;
 	MYSQL *maria_connection = NULL;						// Definition of mysql structure
 	mysql_init(&avr_maria);								// Initialize mysql structure
 	maria_connection = mysql_real_connect(&avr_maria, MARIA_HOST, MARIA_USER, MARIA_PASS, MARIA_DATABASE, 3306, (char *)NULL, 0);
 	
-	if(maria_connection == NULL) {
+	if(maria_connection == NULL) {						// Check mariadb connection fail
 		printf("%s\n", mysql_error(&avr_maria));
 		exit(1);
+	} else {
+		printf("MariaDB connected successfully.\n");
 	}
-	printf("MariaDB connected successfully.\n");
 	
-	sprintf(avr_query_statement, "INSERT INTO rpi_avr VALUES "
-								 "('%s', RPI_CLIENT_ID, RPI_ID, AVR_ID, '%c', '%s')", rpi_client_id, avr_read_content, avr_boiler_temp);
-	avr_maria_set = mysql_query(maria_connection, avr_query_statement);
+	// Make insert query and send query
+	sprintf(avr_query_statement, "INSERT INTO rpi_avr (cid, client_id, rpi_id, avr_id, avr_data, avr_param) VALUES "
+								 "('%s', '%s', '%s', '%s', '%c', '%s')", cid, CLIENT_ID, RPI_ID, AVR_ID, avr_read_content, avr_boiler_temp);
+								 
+	for(query_retry_count = 0; query_retry_count < 5; query_retry_count++) {
+		rpi_query_check = mysql_query(maria_connection, avr_query_statement);
+		if(rpi_query_check == 0) {
+			printf("cid %s data successfully inserted.\n", cid);
+			break;
+		} else {
+			printf("Failed to insert mariadb query. Retry. (Retry attempt : %d / 5)\n", query_retry_count + 1);
+			printf("%s\n", mysql_error(&avr_maria));
+			if(query_retry_count == 4) {
+				printf("Insert query is not available. Please check rpi_avr table and query again.\n");
+			}
+		}
+	}
+	
 	mysql_close(&avr_maria);
 	
 	return 0;
@@ -48,14 +75,13 @@ int avr_mysql_set(void)
 
 int main(int argc, char* argv[])
 {        
-   int tty_usb = -1; 					// Destination device(file) descriptor. Default : Not connected.
-   int save_data_file = -1;				// Default : File not exist.
-   //int    ndx;
-   int    cnt;
-   unsigned char   buf[1];				// Variable for receive data.
-   struct termios    serial_settings;	// Serial port termios communication settings.
-   struct pollfd     poll_events;       // Check polling event.
-   int    poll_state = -1;
+   int	tty_usb = -1; 					// Destination device(file) descriptor. Default : Not connected.
+   int	read_check = -1;				// Check read() function read data (Default : -1, Data read : byte size, Not read : -1)
+   unsigned char	buf[2] = {'\0'};	// Variable for receive data. (buf[0] : Real data, buf[1] : Noises after data)
+   struct	termios	serial_settings;	// Serial port termios communication settings.
+   struct	pollfd	poll_events;        // Check polling event structure.
+   int	poll_state = -1;				// Change poll_state when data is received. (Default : -1)
+   int	avr_get_count = 0;				// Check count when data is sent from AVR (Set 0 when RPi reboot)
 
    tty_usb = open( "/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NONBLOCK );	// Open ttyUSB0 (Read and Write, NO CTTY, NO BLOCK)
    if (tty_usb < 0) {        
@@ -65,15 +91,13 @@ int main(int argc, char* argv[])
 	   printf("ATmega8535 is connected by ttyUSB0. Polling standby.\n");
    }
    
-   //save_data_file = open("/home/jang/문서/ProjectResources/TestCodes/avr_data.txt", O_WRONLY);
-   
    // Serial port termios communication settings
-   memset( &serial_settings, 0, sizeof(serial_settings) );			// Initialize serial_settgins termios struct.
+   memset(&serial_settings, 0, sizeof(serial_settings));			// Initialize serial_settgins termios struct.
    serial_settings.c_cflag       = B9600 | CS8 | CLOCAL | CREAD;	// Control modes. (9600, 8bit data, No parity, 1 Stopbit, No Hardware and Software flow control)
    serial_settings.c_oflag       = 0;	/* ? */						// Output modes.
    serial_settings.c_lflag       = 0;	/* ? */						// Local modes.
    serial_settings.c_cc[VTIME]   = 0;	/* ? */						 
-   serial_settings.c_cc[VMIN]    = 1;	/* ? */						// Minimum number of characters for non canonical read.
+   serial_settings.c_cc[VMIN]    = 1;								// Minimum number of characters for non canonical read.
    
    tcflush(tty_usb, TCIFLUSH ); /* ? */
    tcsetattr(tty_usb, TCSANOW, &serial_settings );	/* ? */
@@ -96,16 +120,14 @@ int main(int argc, char* argv[])
 
       if (poll_state > 0) {						// Have poll events
          if (poll_events.revents & POLLIN)	{	// Received poll data
-            cnt = read(tty_usb, buf, 1);
-            printf("Data received. >> %d byte, %s\n", cnt, buf);
+            read_check = read(tty_usb, buf, 1);
+            printf("Data received. >> %d byte, %s\n", read_check, buf);
+            printf("buf[0] print : %c\n", buf[0]);
             
-            if(save_data_file  < 0) {
-				printf("\"avr_data.txt\" file dose not exist or not 0byte. Unable to write data to \"avr_data.txt\"\n");
-			} else {
-				avr_mysql_set();
-				printf("Data inserted to database. >> %d byte, %s\n", cnt, buf);
-			}
-         }
+            avr_get_count++;
+			avr_maria_set(avr_get_count, (char)buf[0]);
+			printf("Data inserted to database. >> %d byte, %c\n", read_check, buf[0]);
+		 }
          
          if (poll_events.revents & POLLERR) {	//	Data corrupted
             printf("Communication error. Please check the device connection.\n");

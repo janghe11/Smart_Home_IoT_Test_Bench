@@ -83,7 +83,8 @@ int main(int argc, char* argv[])
    int	poll_state = -1;				// Change poll_state when data is received. (Default : -1)
    int	avr_get_count = 0;				// Check count when data is sent from AVR (Set 0 when RPi reboot)
 
-   tty_usb = open( "/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NONBLOCK );	// Open ttyUSB0 (Read and Write, NO CTTY, NO BLOCK)
+   // Open ttyUSB0 (Read and Write, NO CTTY, NO BLOCK)
+   tty_usb = open( "/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NONBLOCK );
    if (tty_usb < 0) {        
       printf("Failed to connect ATmega8535. Please check RS232 cable connection again.\n");
       return -1;

@@ -64,11 +64,11 @@ chown -R pi:pi /home/pi/CapstoneDesign_MicroProcessor
 mkdir /home/pi/public_html 
 chown pi:pi /home/pi/public_html
 
+\cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/apache2/apache2.conf /etc/apache2/apache2.conf
+chown root:root /etc/apache2/apache2.conf
+
 \cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 chown root:root /etc/apache2/sites-available/000-default.conf
-
-\cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/apache2/apache2.conf /etc/apache2/sites-available/apache2.conf
-chown root:root /etc/apache2/sites-available/apache2.conf 
 
 # Install netdata
 \cp -r /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/netdata /home/pi/public_html
@@ -84,6 +84,7 @@ chown pi:pi /home/pi/public_html/avr_daemon
 chown pi:pi /home/pi/public_html/control.php
 
 # Add WiFi SSID and Password
+echo "\n"
 echo "network={" >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo "        ssid="Capstone_MP"" >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo "        psk="capstonemp12"" >> /etc/wpa_supplicant/wpa_supplicant.conf

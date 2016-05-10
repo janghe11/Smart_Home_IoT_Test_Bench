@@ -78,7 +78,7 @@
         $mariaConnect = mysql_connect($mariaHost, $mariaUser, $mariaPassword) or die("MariaDB Connect Error. Please check database name.(From andGetMaria)\n");
         $mariaDBConnect = mysql_select_db($mariaDBName, $mariaConnect);
         mysql_query("set names utf8");
-        $mariaQuery = "select * from rpi_avr Order By cid DESC";
+        $mariaQuery = "select * from rpi_avr Order By cid DESC LIMIT 10";
         $getMariaData = mysql_query($mariaQuery, $mariaConnect);
             
         while($mariaRow = mysql_fetch_array($getMariaData, MYSQL_ASSOC)) {
@@ -150,12 +150,13 @@
     function avrSetComm($andCommGet, $avrDevId, $avrBoilerTemp)
     {
         // Send command to AVR
-        $avrSendComm = "echo $andCommGet >> $avrDevId";        // Make command to AVR
-        exec($avrSendComm);                                    // Send data to AVR
+        $avrDevOpen = fopen("$avrDevId", "w");
+        fwrite($avrDevOpen, "$andCommGet");
+        fclose($avrDevOpen);
         
         if($avrBoilerTemp != null)
             $avrSendComm = "echo $avrBoilerTemp >> $avrDevId"; // Make boiler temperature command to AVR
-        exec($avrSendComm);    
+        //exec($avrSendComm);    
     }
 
     //========== Start Main ==========//

@@ -8,8 +8,13 @@
 ROOT_UID="0"
 
 if [ "$UID" -ne "$ROOT_UID" ] ; then
-	echo "Root permission is required. Please command with \"sudo -\""
+	echo "Root permission is required. Please command with \"sudo -\"\n"
 	exit 1
+fi
+
+if [ ! -f /dev/ttyUSB0 ]; then
+	echo "RS-232 Cable (ttyUSB0) is not connected! Please check your device again.\n"
+	exit 2
 fi
 
 echo "Start to install Smart Home IoT Test Bench on Raspberry Pi. It takes almost 25 - 30 minutes...\n"
@@ -83,12 +88,17 @@ chown pi:pi /home/pi/public_html/avr_daemon
 \cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/control.php /home/pi/public_html
 chown pi:pi /home/pi/public_html/control.php
 
+# Add udev rules for ttyUSB0
+SUBSYSTEM=="ttyUSB0", GROUP="dialout"
+
 # Add WiFi SSID and Password
 echo "\n" >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo "network={" >> /etc/wpa_supplicant/wpa_supplicant.conf
-echo "        ssid=\"Capstone_MP\"" >> /etc/wpa_supplicant/wpa_supplicant.conf
-echo "        psk=capstonemp12" >> /etc/wpa_supplicant/wpa_supplicant.conf
+echo "        ssid=\"CapstoneMP\"" >> /etc/wpa_supplicant/wpa_supplicant.conf
+echo "        psk=\"capstonemp12\"" >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf
+
+wpa_supplicant -B -c/etc/wpa_supplicant.conf -iwlan0
 
 # Add control.php and avr_daemon daemon to /etc/init.d
 

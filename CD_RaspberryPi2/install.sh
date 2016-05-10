@@ -84,10 +84,10 @@ chown pi:pi /home/pi/public_html/avr_daemon
 chown pi:pi /home/pi/public_html/control.php
 
 # Add WiFi SSID and Password
-echo "\n"
+echo "\n" >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo "network={" >> /etc/wpa_supplicant/wpa_supplicant.conf
-echo "        ssid="Capstone_MP"" >> /etc/wpa_supplicant/wpa_supplicant.conf
-echo "        psk="capstonemp12"" >> /etc/wpa_supplicant/wpa_supplicant.conf
+echo "        ssid=\"Capstone_MP\"" >> /etc/wpa_supplicant/wpa_supplicant.conf
+echo "        psk=capstonemp12" >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf
 
 # Add control.php and avr_daemon daemon to /etc/init.d

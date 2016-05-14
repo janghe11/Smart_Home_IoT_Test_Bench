@@ -56,15 +56,15 @@ unsigned char door_lcd;
 // Rotary 포트B의 입력핀 어드레스 받는 변수와 제어하는 변수
 unsigned char r;
 unsigned char LCD[16] = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f };
-
-unsigned char data = 0; // RS232 UART UDR data input / output
+unsigned char temp_changed = '\0';                                // check temperature is changed (To set data to rs232)
+unsigned char data = '\0';                                               // RS232 UART UDR data input / output
 
 //unsigned char modify_password = 0;
-unsigned char pwd_check_array = 0; // check password insert array
-unsigned char KEY; // Save 1 key Row
-unsigned char FLAG; // Check specific key code
+unsigned char pwd_check_array = 0;                                 // check password insert array
+unsigned char KEY;                                                         // Save 1 key Row
+unsigned char FLAG;                                                       // Check specific key code
 unsigned char KEY2;
-unsigned int delay_count = SCAN_SPEED; //delay count for key scan
+unsigned int delay_count = SCAN_SPEED;                         //delay count for key scan
 unsigned char check_password[] = {0x0f, 0x0f, 0x0f, 0x0f}; // Saved password (default is ffff)
 unsigned char set_password[] = {0x04, 0x05, 0x06, 0x07};
 int passwordWrong; // Check Password (+1 if password is wrong)
@@ -86,8 +86,7 @@ int delay(unsigned int i) {
 * ====================RS232 data variables====================
 * unsigned char 'u' : Doorlock unlock 
 * unsigned char 'l' : Doorlock lock
-* unsigned char 't' : Boiler temp increase
-* unsigned char 'b' : Boiler temp decrease
+* unsigned char '0' ~ '9' : Boiler temperature control
 * unsigned char 'g' : Loosen gas valve
 * unsigned char 'v' : Fasten gas valve
 */
@@ -121,38 +120,93 @@ unsigned char get_rs232_data(void)
 
 int rs232_get_command(unsigned char data)
 {
-  switch(data) {
-  case 'u':
-    // Doorlock unlock
-    set_rs232_data('u');
-    break;
-  case 'l':
-    // Doorlock lock
-    set_rs232_data('l');
-    break;
-  case 't':
-    // Boiler temp increase
-    r += 1;
-    set_rs232_data('t');
-    break;
-  case 'b':
-    // Boiler temp increase
-    r -= 1;
-    set_rs232_data('b');
-    break;
-  case 'g':
-    // Loosen gas valve
-    spinRight();
-    set_rs232_data('g');
-    break;
-  case 'v':
-    // Fasten gas valve
-    spinLeft();
-    set_rs232_data('v');
-    break;
-  default:
-    asm("nop");
+  unsigned char show_char = 0;
+  unsigned char tens_digit = 0;
+  unsigned char one_digit = 0;
+  unsigned char boiler_temp = 0;
+  
+  if((data >= '0') && (data <= '9')) {                                // data 0 ~ 9
+    COMMAND(0x01);                                                    // Clear screen
+    COMMAND(0x02);                                                    // Set cursor to 1st line
+    for (show_char = 0; show_char < 16; show_char++) {     // Show basic strings for boiler
+      CHAR_O(Boiler1[show_char]);
+    }
     
+    COMMAND(0xc0);                                                    // Set cursor to 2nd line
+    for (show_char = 0; show_char < 16; show_char++) {
+      CHAR_O(Boiler2[show_char]);
+    }
+    
+    boiler_temp = data - 0x12;                                          // Make tens digit number
+    tens_digit = (boiler_temp >> 4) + 0x30;
+    
+    if((data == 0x38) || (data == 0x39)) {                          // Make one digit number
+      boiler_temp = data - 0x02;                                       // if data 8 ~ 9
+    } else {
+      boiler_temp = data + 0x18;                                       // if data 0 ~ 7
+    }
+    
+    one_digit = (boiler_temp & 0x0f) + 0x30;                       // if data 0 ~ 1
+    if((one_digit >= 0x3a) && (one_digit <= 0x3f)) {            // if data 2 ~ 7
+      one_digit -= 0x0a;
+    }
+    
+    COMMAND(0xce);
+    CHAR_O(tens_digit);
+    COMMAND(0xcf);
+    CHAR_O(one_digit);
+    set_rs232_data(data);
+    
+  } else if((data >= 'a') && (data <= 'f')) {                     // data a ~ c
+    COMMAND(0x01);                                                    // Clear screen
+    COMMAND(0x02);                                                    // Set cursor to 1st line
+    for (show_char = 0; show_char < 16; show_char++) {     // Show basic strings for boiler
+      CHAR_O(Boiler1[show_char]);
+    }
+    
+    COMMAND(0xc0);                                                    // Set cursor to 2nd line
+    for (show_char = 0; show_char < 16; show_char++) {
+      CHAR_O(Boiler2[show_char]);
+    }
+    
+    boiler_temp = data - 0x33;                                          // Make tens digit number
+    tens_digit = (boiler_temp >> 4) + 0x30;
+    
+    if((data == 0x61) || (data == 0x62)) {                            // Make one difit number
+      boiler_temp = data + 0x07;                                         // if data a ~ b
+    } else {
+      boiler_temp = data - 0x03;                                         // if data c ~ f
+    }
+    one_digit = (boiler_temp & 0x0f) + 0x30;                        
+    
+    COMMAND(0xce);
+    CHAR_O(tens_digit);
+    COMMAND(0xcf);
+    CHAR_O(one_digit);
+    set_rs232_data(data);
+  } else {
+    switch(data) {
+    case 'u':
+      // Doorlock unlock
+      set_rs232_data('u');
+      break;
+    case 'l':
+      // Doorlock lock
+      set_rs232_data('l');
+      break;
+    case 'g':
+      // Loosen gas valve
+      spinRight();
+      set_rs232_data('g');
+      break;
+    case 'v':
+      // Fasten gas valve
+      spinLeft();
+      set_rs232_data('v');
+      break;
+    default:
+      asm("nop");
+    }
   }
   
   return 0;
@@ -455,7 +509,7 @@ int main(void) {
     // Get data from UART and command informaions  
     data = get_rs232_data();
     rs232_get_command(data);
-    r = PINB; // r이라는 상수에 포트B의 입력핀 어드레스를 넣는다.
+    
     //1. Doorlock & Step Motor Open Process
     
     if(!X0) {
@@ -560,6 +614,7 @@ int main(void) {
       // 3.Rotary Switch Boiler Process
     } 
     else if (X2) {
+      r = PINB; // r이라는 상수에 포트B의 입력핀 어드레스를 넣는다.
       if(LCD[r&0x0f]==0){ // 18도 = ROTARY B(0)
         COMMAND(0x01);
         boiler();
@@ -672,15 +727,19 @@ int main(void) {
         CHAR_O(0x33);
         delay(65000);
       }
+      
+      if(temp_changed != r) {                    // Send boiler temperature data to RPi
+        if((r >= 0x40) && (r <= 0x49)) {        // if data 0 ~ 9
+          set_rs232_data(r - 0x10);
+        } else {                                        // if data a ~ f
+          set_rs232_data(r + 0x17);
+        }
+      }
+      temp_changed = r;                            // Insert previous boiler temperature
     }
     // 4.Heating Gas Valve On/Off Process 
     else if (X3) {
       
-    }
-    else {
-      COMMAND(0x01);
-      DISPLAY();
-      delay(65000);
     }
   } while (1);
 }

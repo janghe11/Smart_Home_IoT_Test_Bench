@@ -66,7 +66,7 @@
         $mariaConnect = mysql_connect($mariaHost, $mariaUser, $mariaPassword) or die("MariaDB Connect Error. Please check database name.(From andGetMaria)\n");
         $mariaDBConnect = mysql_select_db($mariaDBName, $mariaConnect);
         mysql_query("set names utf8");
-        $mariaQuery = "select * from rpi_avr Order By cid DESC LIMITrpiResetData($andClientId, $andModeGet, $andCommGet, $avrBoilerTemp); 10";
+        $mariaQuery = "select * from rpi_avr Order By cid DESC LIMIT 10";
         $getMariaData = mysql_query($mariaQuery, $mariaConnect);
             
         while($mariaRow = mysql_fetch_array($getMariaData, MYSQL_ASSOC)) {
@@ -168,7 +168,7 @@
             
             // loop until command fetch checker true
             while($rpiCmdFetchChecker == false) {
-                echo("First rpiComFetchChekcer : $rpiCmdFetchChekcer\n");
+                echo("First rpiComFetchChekcer : $rpiCmdFetchChecker\n");
                 $rpiCmdFetchChecker = rpiCheckAvrFetch($mariaHost, $mariaUser, $mariaPassword, $mariaDBName, $andCommGet, $mariaPreData);
                 echo("AVR data not fetched yet. rpiCmdFetchChecker : $rpiCmdFetchChecker\n");
                 sleep(1);

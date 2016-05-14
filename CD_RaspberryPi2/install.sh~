@@ -90,7 +90,6 @@ chown pi:pi /home/pi/public_html/avr_daemon
 # Install control.php
 \cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/control.php /home/pi/public_html
 chown pi:pi /home/pi/public_html/control.php
-chmod 755 /home/pi/public_html/control.php
 
 # Add udev rules for ttyUSB0
 adduser www-data dialout

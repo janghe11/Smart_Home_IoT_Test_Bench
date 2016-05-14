@@ -24,49 +24,37 @@
     $mariaDBName = "and_rpi_avr";
     $mariaPreData = null;
 
-    $avrBoilerTemp = null;
     $avrDevId = "/dev/ttyUSB0"; // Device location of AVR USB
 
-    function rpiResetData($andClientId, $andModeGet, $andCommGet, $avrBoilerTemp)
+    function rpiResetData($andClientId, $andModeGet, $andCommGet)
     {
         $andClientId = null;
         $andModeGet = null;
         $andCommGet = null;
-        $avrBoilerTemp = null;
     }
 
-    function rpiAndCommCheck($andCommGet, $avrBoilerTemp)
+    function rpiAndCommCheck($andClientId, $andCommGet)
     {
-        switch($andCommGet) {
-        case 'u':
-            break;
-        case 'l':
-            break;
-        case 't':
-            if(($avrBoilerTemp < 18) || ($avrBoilerTemp > 30)) {
-                echo("Couldn't receive boiler temperature from android.\n");
+        if($andCommGet >= '0' && $andCommGet <= '9') {  // Boiler Temperature 18 ~ 27 celcius.
+            ;
+        } else if($andCommGet >= 'a' && $andCommGet <= 'f') {   // Boiler Temperature 28 ~ 33 celcius.
+            ;
+        } else {
+            switch($andCommGet) {
+            case 'u':
+                break;
+            case 'l':
+                break;
+            case 'g':
+                break;
+            case 'v':
+                break;
+            default:
+                echo("Android commnad token to AVR error.\n");
+                $andClientId = null;
                 $andCommGet = null;
-                $avrBoilerTemp = null;
-                $errorCheck = 1;
-            }
-            break;
-        case 'b':
-            if(($avrBoilerTemp < 18) || ($avrBoilerTemp > 30)) {
-                echo("Couldn't receive boiler temperature from android.\n");
-                $andCommGet = null;   
-                $avrBoilerTemp = null;
-                $errorCheck = 1;
-            }
-            break;
-        case 'g':
-            break;
-        case 'v':
-            break;
-        default:
-            echo("Android commnad token to AVR error.\n");
-            $andClientId = null;
-            $andCommGet = null;
-            return 0;
+                return 0;
+            }   
         }
         echo ("rpiAndCommCheck confirmed.\n");
         return 1;
@@ -78,7 +66,7 @@
         $mariaConnect = mysql_connect($mariaHost, $mariaUser, $mariaPassword) or die("MariaDB Connect Error. Please check database name.(From andGetMaria)\n");
         $mariaDBConnect = mysql_select_db($mariaDBName, $mariaConnect);
         mysql_query("set names utf8");
-        $mariaQuery = "select * from rpi_avr Order By cid DESC LIMIT 10";
+        $mariaQuery = "select * from rpi_avr Order By cid DESC LIMITrpiResetData($andClientId, $andModeGet, $andCommGet, $avrBoilerTemp); 10";
         $getMariaData = mysql_query($mariaQuery, $mariaConnect);
             
         while($mariaRow = mysql_fetch_array($getMariaData, MYSQL_ASSOC)) {
@@ -136,10 +124,10 @@
         
         mysql_close($mariaConnect);
         
-        if(in_array($mariaPreData, $mariaFetchData)) {
+        if(in_array($mariaPreData, $mariaFetchData) == true) {  // When command is not fetched yet.
                 return 0;
-        } else {
-            if(in_array($andCommGet, $mariaFetchData)) {
+        } else {    // When command is fetched, check command data is right which android sent.
+            if(in_array($andCommGet, $mariaFetchData) == true) {
                 return 1;
             } else {
                 return 0;
@@ -147,23 +135,18 @@
         }
     }
 
-    function avrSetComm($andCommGet, $avrDevId, $avrBoilerTemp)
+    function avrSetComm($andCommGet, $avrDevId)
     {
         // Send command to AVR
         $avrDevOpen = fopen("$avrDevId", "w");
         fwrite($avrDevOpen, "$andCommGet");
         fclose($avrDevOpen);
-        
-        if($avrBoilerTemp != null)
-            $avrSendComm = "echo $avrBoilerTemp >> $avrDevId"; // Make boiler temperature command to AVR
-        //exec($avrSendComm);    
     }
 
     //========== Start Main ==========//
     $andClientId = $_POST["andClientId"];
     $andModeGet = $_POST["andModeSet"];
     $andCommGet = $_POST["avrCommSet"];
-    $avrBoilerTemp = $_POST["avrBoilerSet"];
 
     // Check client_id between saved raspberry data and received android data
     $cliendIDChecker = strcmp($andClientId, $rpiClientId);
@@ -175,13 +158,13 @@
     if($andModeGet == 1) {                      // Mode 1 -> Status check mode.
         andGetMaria($mariaHost, $mariaUser, $mariaPassword, $mariaDBName);
     } else if($andModeGet == 2) {               // Mode 2 -> Android to AVR set command.
-        $rpiCmdRightChecker = rpiAndCommCheck($andCommGet, $avrBoilerTemp);
+        $rpiCmdRightChecker = rpiAndCommCheck($andClientId, $andCommGet);
         
         if($rpiCmdRightChecker == true) {
             // Save previous cid from database
             rpiGetMariaPre($mariaHost, $mariaUser, $mariaPassword, $mariaDBName, $mariaPreData);
             // Send command to AVR
-            avrSetComm($andCommGet, $avrDevId, $avrBoilerTemp);
+            avrSetComm($andCommGet, $avrDevId);
             
             // loop until command fetch checker true
             while($rpiCmdFetchChecker == false) {
@@ -194,13 +177,13 @@
             echo("AVR data fetched!. rpiCmdFetchChecker : $rpiCmdFetchChecker\n");
             andGetMaria($mariaHost, $mariaUser, $mariaPassword, $mariaDBName);
         } else {                                // andCommGet failed.
-            rpiResetData($andClientId, $andModeGet, $andCommGet, $avrBoilerTemp);
+            rpiResetData($andClientId, $andModeGet, $andCommGet);
             echo("Occured error while receiving command data from android. andCommGet : $andCommGet \n");
         }
     } else {                                    // andModeGet failed.
-        rpiResetData($andClientId, $andModeGet, $andCommGet, $avrBoilerTemp);
+        rpiResetData($andClientId, $andModeGet, $andCommGet);
         echo("Android mode receive data error!\n");
     }
 
-    rpiResetData($andClientId, $andModeGet, $andCommGet, $avrBoilerTemp);
+    rpiResetData($andClientId, $andModeGet, $andCommGet);
 ?>

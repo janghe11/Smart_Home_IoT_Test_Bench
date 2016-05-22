@@ -21,55 +21,44 @@
 #define    TXC      USR_Bit6
 #define    RXC      USR_Bit7
 // Sound settings interrupt and pin
-//#define    OCIE1A   TIMSK_Bit4
-//#define    TOIE1   TIMSK_Bit2
-//#define    I             SREG_Bit7
-//#define    DDD5      DDRD_Bit5
-//#define    PD5        PORTD_Bit5
+#define    OCIE1A   TIMSK_Bit4
+#define    I             SREG_Bit7
+#define    DDD5      DDRD_Bit5
+#define    PD5        PORTD_Bit5
 
 // Doorlock Keyscan speed control
-#define SCAN_SPEED      6000
+#define SCAN_SPEED      8000
 #define ENABLE	             1
 #define DISABLE	     0
-/*
-int sound_count;                                                        // Set count for sound output
-#pragma vector = TIMER1_COMPA_vect
-__interrupt void COMP_A(void)
-{
-  sound_count--;
-}
-*/
+
 __flash unsigned char KCODE[16] = {0x00, 0x04, 0x08, 0x0c, 0x01, 0x05, 0x09, 0x0d, 0x02, 0x06, 0x0a, 0x0e, 0x03, 0x07, 0x0b, 0x0f};
 __flash unsigned char SPINANGLE[8] = {0x04, 0x0c, 0x08, 0x48, 0x40, 0xc0, 0x80, 0x84};
 
-// LCD ÃÊ±â Ãâ·Â È­¸é
+// LCD ÃƒÃŠÂ±Ã¢ ÃƒÃ¢Â·Ã‚ ÃˆÂ­Â¸Ã©
 unsigned char msg1[]="**** Hello **** ";
 unsigned char msg2[]="PUSH Button Plz ";
 
-// 1-1.µµ¾î¶ô OPEN LCD Ãâ·Â È­¸é
+// 1.ÂµÂµÂ¾Ã®Â¶Ã´ OPEN LCD ÃƒÃ¢Â·Ã‚ ÃˆÂ­Â¸Ã©
 __flash unsigned char Door_lock1[] = "1-Door Lock Fun?";
 __flash unsigned char Door_lock2[] = "2-PASSWORD :    ";
-__flash unsigned char door_modified[] = "PWD Modified    ";
 
-// 1-2.ÆĞ½º¿öµå ÀÏÄ¡ ¾ğ¶ô Ãâ·Â È­¸é
+// 2.Ã†ÃÂ½ÂºÂ¿Ã¶ÂµÃ¥ Ã€ÃÃ„Â¡ Â¾Ã°Â¶Ã´ ÃƒÃ¢Â·Ã‚ ÃˆÂ­Â¸Ã©
 __flash unsigned char Un_lock1[] = " PASSWORD  MATCH";
 __flash unsigned char Un_lock2[] = " ** Door OPEN **";
 
-// 1-3. Door locked Character
-__flash unsigned char door_locked1[] = " STAY OUT MODE  ";
-__flash unsigned char door_locked2[] = "**Door Locked** ";
-
-// 2.º¸ÀÏ·¯ LCD Ãâ·Â È­¸é
+// 3.ÂºÂ¸Ã€ÃÂ·Â¯ LCD ÃƒÃ¢Â·Ã‚ ÃˆÂ­Â¸Ã©
 __flash unsigned char Boiler1[] = "1-Boiler Fun?   ";
 __flash unsigned char Boiler2[] = "2-Temperature:  ";
 
+__flash unsigned char KeyChange[] = "PWD Modified";
+
 #include "LCD4.h"
-// Á¦¾î º¯¼ö
+// ÃÂ¦Â¾Ã® ÂºÂ¯Â¼Ã¶
 unsigned char k;
-// Door Lock LCD Á¦¾î º¯¼ö
+// Door Lock LCD ÃÂ¦Â¾Ã® ÂºÂ¯Â¼Ã¶
 unsigned char door_lcd;
 
-// Rotary Æ÷Æ®BÀÇ ÀÔ·ÂÇÉ ¾îµå·¹½º ¹Ş´Â º¯¼ö¿Í Á¦¾îÇÏ´Â º¯¼ö
+// Rotary Ã†Ã·Ã†Â®BÃ€Ã‡ Ã€Ã”Â·Ã‚Ã‡Ã‰ Â¾Ã®ÂµÃ¥Â·Â¹Â½Âº Â¹ÃÂ´Ã‚ ÂºÂ¯Â¼Ã¶Â¿Ã ÃÂ¦Â¾Ã®Ã‡ÃÂ´Ã‚ ÂºÂ¯Â¼Ã¶
 unsigned char r;
 unsigned char LCD[16] = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f };
 unsigned char temp_changed = '\0';                                		 // Check temperature is changed (To set data to rs232)
@@ -84,8 +73,15 @@ unsigned char check_password[] = {0x0f, 0x0f, 0x0f, 0x0f}; 		 // Saved password 
 unsigned char set_password[] = {0x04, 0x05, 0x06, 0x07};
 int passwordWrong; 										 // Check Password (+1 if password is wrong)
 int pwd_correct_incorrect = 0;                                                               // Get password_checker(); return value
-// ºñ¹Ğ¹øÈ£ * Ç¥½Ã Á¦¾î º¯¼ö
+// ÂºÃ±Â¹ÃÂ¹Ã¸ÃˆÂ£ * Ã‡Â¥Â½Ãƒ ÃÂ¦Â¾Ã® ÂºÂ¯Â¼Ã¶
 int number = 0;
+unsigned int sound_count = 0;                                                        // Set count for sound output
+unsigned char sound_tone = 0;
+#pragma vector = TIMER1_COMPA_vect
+__interrupt void COMP_A(void)
+{
+  sound_count--;
+}
 
 unsigned int spinCount, spinStep; 							 // Step Motor counts
 
@@ -106,22 +102,18 @@ int delay(unsigned int i) {
 * unsigned char 'g' : Loosen gas valve
 * unsigned char 'v' : Fasten gas valve
 */
-
-/*
 int avr_sound(int sound_num) {
-	TOIE1 = 1;
 	TCNT1H = 0;
 	TCNT1L = 0;
 	TCCR1A = 0x40;
+	TCCR1B = 0x09;
 	OCIE1A = 1;
-	PD5 = 1;
 	I = 1;
 	
 	if(sound_num == 0) {                                                // If password is wrong
 		for(unsigned char sound_wrong_count = 0; sound_wrong_count < 5; sound_wrong_count++) {
 			OCR1AH = 784 >> 8;
 			OCR1AL = 784 & 0x00ff;
-			TCCR1B = 0x09;
 			sound_count = 294;
 			while(sound_count != 0);
 			
@@ -130,122 +122,89 @@ int avr_sound(int sound_num) {
 			TCCR1A = 0;
 			sound_count = 5;
 			while(sound_count != 0);
-			
-			TCCR1A = 0x40;
-		}
-		TCCR1A = 0;												
+		}										
 	} else if(sound_num == 1) {											// If password is correct(As same as door is unlocked)
 		OCR1AH = 880 >> 8;
 		OCR1AL = 880 & 0x00ff;
-		TCCR1B = 0x09;
 		sound_count = 2093;
 		while(sound_count != 0);
 			
 		OCR1AH = 699 >> 8;
 		OCR1AL = 699 & 0x00ff;
-		TCCR1B = 0x09;
-		sound_count = 1531;
+		sound_count = 1431;
 		while(sound_count != 0);
-		  
+			
 		OCR1AH = 587 >> 8;
 		OCR1AL = 587 & 0x00ff;
-		TCCR1B = 0x09;
-		sound_count = 1668;
+		sound_count = 1568;
 		while(sound_count != 0);
 		
-		TCCR1A = 0;
 	} else if(sound_num == 2) {											// If door is locked
 		OCR1AH = 699 >> 8;
 		OCR1AL = 699 & 0x00ff;
-		TCCR1B = 0x09;
 		sound_count = 1431;
 		while(sound_count != 0);
 		  
 		OCR1AH = 880 >> 8;
 		OCR1AL = 880 & 0x00ff;
-		TCCR1B = 0x09;
 		sound_count = 2093;
 		while(sound_count != 0);
 		
-		TCCR1A = 0;
 	} else if(sound_num == 3) {											// When keypad is pressed
 		OCR1AH = 440 >> 8;
 		OCR1AL = 440 & 0x00ff;
-		TCCR1B = 0x09;
 		sound_count = 1570;
 		while(sound_count != 0);
-		
-		OCR1AH = 0xff;
-        OCR1AL = 0xff;
-        TCCR1A = 0;
-        sound_count = 50;
-        while(sound_count != 0);
 	}
-        TCNT1H = 0;
-		TCNT1L = 0;
-		OCR1AH = 0;
-		OCR1AL = 0;
-		TCCR1A = 0;
-		TCCR1B = 0;
-		OCIE1A = 0;
-		PD5 = 0;
-		TOIE1 = 0;
-		I = 0;
+	
+	OCR1AH = 0xff;
+    OCR1AL = 0xff;
+    TCCR1A = 0;
+    sound_count = 50;
+    while(sound_count != 0);
+	
+	TCCR1B = 0;
+	OCIE1A = 0;
+	I = 0;
 	
 	return 0;
 }
-*/
 
 void doorlock(void) {
   // LCD Display -> Door lock and Password
-  // LCD Å¬¸®¾î
+  // LCD Ã…Â¬Â¸Â®Â¾Ã®
   COMMAND(0x01);
-  // 1¶óÀÎ µ¥ÀÌÅÍ Ãâ·Â
-  COMMAND(0x02);  // Ä¿¼­¸¦ È¨À¸·Î ¼Â
+  // 1Â¶Ã³Ã€Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
+  COMMAND(0x02);  // Ã„Â¿Â¼Â­Â¸Â¦ ÃˆÂ¨Ã€Â¸Â·Ã Â¼Ã‚
   for (k = 0; k < 16; k++) {
-    CHAR_O(Door_lock1[k]);   // µ¥ÀÌÅÍ¸¦ LCD·Î µ¥ÀÌÅÍ Ãâ·Â
+    CHAR_O(Door_lock1[k]);   // ÂµÂ¥Ã€ÃŒÃ…ÃÂ¸Â¦ LCDÂ·Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
   }
-  // 2¶óÀÎ µ¥ÀÌÅÍ Ãâ·Â
-  COMMAND(0xc0);  // Ä¿¼­¸¦ ¶óÀÎ 2·Î ¼Â
+  // 2Â¶Ã³Ã€Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
+  COMMAND(0xc0);  // Ã„Â¿Â¼Â­Â¸Â¦ Â¶Ã³Ã€Ã 2Â·Ã Â¼Ã‚
   for (k = 0; k < 16; k++) {
-    CHAR_O(Door_lock2[k]);   // µ¥ÀÌÅÍ¸¦ LCD·Î µ¥ÀÌÅÍ Ãâ·Â
+    CHAR_O(Door_lock2[k]);   // ÂµÂ¥Ã€ÃŒÃ…ÃÂ¸Â¦ LCDÂ·Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
   }
   door_lcd=1;
 }
 
-int door_lock_unlock(unsigned char lock_check) {
-  // LCD Å¬¸®¾î
+void door_unlock(void) {
+  // LCD Ã…Â¬Â¸Â®Â¾Ã®
   COMMAND(0x01);
-  // 1¶óÀÎ µ¥ÀÌÅÍ Ãâ·Â
-  COMMAND(0x02);  							// Ä¿¼­¸¦ È¨À¸·Î ¼Â
-  if(lock_check == 'u') {
-	for (k = 0; k < 16; k++) {					// When door is unlocked
-		CHAR_O(Un_lock1[k]);   				// µ¥ÀÌÅÍ¸¦ LCD·Î µ¥ÀÌÅÍ Ãâ·Â
-	}
-	// 2¶óÀÎ µ¥ÀÌÅÍ Ãâ·Â
-	COMMAND(0xc0);  					        // Ä¿¼­¸¦ ¶óÀÎ 2·Î ¼Â
-	for (k = 0; k < 16; k++) {
-		CHAR_O(Un_lock2[k]);   				// µ¥ÀÌÅÍ¸¦ LCD·Î µ¥ÀÌÅÍ Ãâ·Â
-	}
-	number=0;  
-  } else if(lock_check == 'l') {					// When door is locked
-	for (k = 0; k < 16; k++) {
-		CHAR_O(door_locked1[k]);
-	}
-	COMMAND(0xc0);
-	for (k = 0; k < 16; k++) {
-		CHAR_O(door_locked2[k]);
-	}
-	number=0;    
+  // 1Â¶Ã³Ã€Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
+  COMMAND(0x02);  // Ã„Â¿Â¼Â­Â¸Â¦ ÃˆÂ¨Ã€Â¸Â·Ã Â¼Ã‚
+  for (k = 0; k < 16; k++) {
+    CHAR_O(Un_lock1[k]);   // ÂµÂ¥Ã€ÃŒÃ…ÃÂ¸Â¦ LCDÂ·Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
   }
-  
-  return 0;
+  // 2Â¶Ã³Ã€Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
+  COMMAND(0xc0);  // Ã„Â¿Â¼Â­Â¸Â¦ Â¶Ã³Ã€Ã 2Â·Ã Â¼Ã‚
+  for (k = 0; k < 16; k++) {
+    CHAR_O(Un_lock2[k]);   // ÂµÂ¥Ã€ÃŒÃ…ÃÂ¸Â¦ LCDÂ·Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
+  }
+  number=0;
 }
 
-// Rotate Step Motor 180 left (Fasten gas valve)
+// Rotate Step Motor 180 left
 int spinLeft(void) {
-  PORTC = 0xff;
-  PORTD = 0xee;
   spinCount = 100;
   spinStep = 6;
   do {
@@ -260,11 +219,9 @@ int spinLeft(void) {
 
 // Rotate Step Motor 180 right
 int spinRight(void) {
-  PORTD = 0xff;
   spinCount = 100;
   spinStep = 0;
   do {
-	PORTC = 0xef;
     PORTD = SPINANGLE[spinStep];
     spinStep = spinStep + 2;
     spinStep &= 0x07;
@@ -276,24 +233,24 @@ int spinRight(void) {
 
 int init_rs232(void)
 {
-  UBRR = 23; 								// UART Baud Rate Register  9600bps in 3.6854MHz
-  UCR = 0x18; 								// UART Control Register -> RXEN, TXEN Enable
+  UBRR = 23; 															// UART Baud Rate Register  9600bps in 3.6854MHz
+  UCR = 0x18; 															// UART Control Register -> RXEN, TXEN Enable
   
   return 0;
 }
 
 unsigned char set_rs232_data(unsigned char data)
 {
-  if(UDRE)									// Wait until data is received
-    UDR = data;								// Transmit data
+  if(UDRE)																// Wait until data is received
+    UDR = data;															// Transmit data
   
   return 0; 
 }
 
 unsigned char get_rs232_data(void)
 {
-  if(RXC)									// When data recieve complete
-    return UDR;								// Get data from UDR
+  if(RXC)																// When data recieve complete
+    return UDR;															// Get data from UDR
   else
     return 0;
 }
@@ -308,7 +265,7 @@ int rs232_get_command(unsigned char data)
   if((data >= '0') && (data <= '9')) {                                	// Data 0 ~ 9
     COMMAND(0x01);                                                    	// Clear screen
     COMMAND(0x02);                                                    	// Set cursor to 1st line
-    for (show_char = 0; show_char < 16; show_char++) {     	// Show basic strings for boiler
+    for (show_char = 0; show_char < 16; show_char++) {     				// Show basic strings for boiler
       CHAR_O(Boiler1[show_char]);
     }
     
@@ -326,8 +283,8 @@ int rs232_get_command(unsigned char data)
       boiler_temp = data + 0x18;                                       	// if data 0 ~ 7
     }
     
-    one_digit = (boiler_temp & 0x0f) + 0x30;                       	// if data 0 ~ 1
-    if((one_digit >= 0x3a) && (one_digit <= 0x3f)) {            	// if data 2 ~ 7
+    one_digit = (boiler_temp & 0x0f) + 0x30;                       		// if data 0 ~ 1
+    if((one_digit >= 0x3a) && (one_digit <= 0x3f)) {            		// if data 2 ~ 7
       one_digit -= 0x0a;
     }
     
@@ -337,10 +294,10 @@ int rs232_get_command(unsigned char data)
     CHAR_O(one_digit);
     set_rs232_data(data);
     
-  } else if((data >= 'a') && (data <= 'f')) {                     	// data a ~ c
+  } else if((data >= 'a') && (data <= 'f')) {                     		// data a ~ c
     COMMAND(0x01);                                                    	// Clear screen
     COMMAND(0x02);                                                    	// Set cursor to 1st line
-    for (show_char = 0; show_char < 16; show_char++) {     	// Show basic strings for boiler
+    for (show_char = 0; show_char < 16; show_char++) {     				// Show basic strings for boiler
       CHAR_O(Boiler1[show_char]);
     }
     
@@ -349,13 +306,13 @@ int rs232_get_command(unsigned char data)
       CHAR_O(Boiler2[show_char]);
     }
     
-    boiler_temp = data - 0x33;                                               // Make tens digit number
+    boiler_temp = data - 0x33;                                          // Make tens digit number
     tens_digit = (boiler_temp >> 4) + 0x30;
     
     if((data == 0x61) || (data == 0x62)) {                            	// Make one difit number
-      boiler_temp = data + 0x07;                                              // if data a ~ b
+      boiler_temp = data + 0x07;                                        // if data a ~ b
     } else {
-      boiler_temp = data - 0x03;                                              // if data c ~ f
+      boiler_temp = data - 0x03;                                        // if data c ~ f
     }
     one_digit = (boiler_temp & 0x0f) + 0x30;                        
     
@@ -366,28 +323,34 @@ int rs232_get_command(unsigned char data)
     set_rs232_data(data);
   } else {
     switch(data) {
-    case 'u':                                                               // Doorlock unlock
-      door_lock_unlock(data);
+    case 'u':
+      // Doorlock unlock
+      door_unlock();
+      set_rs232_data('u');
       break;
-    case 'l':                                                                // Doorlock lock
-      door_lock_unlock(data);
+    case 'l':
+      // Doorlock lock
+      set_rs232_data('l');
       break;
-    case 'g':                                                              // Loosen gas valve
+    case 'g':
+      // Loosen gas valve
       spinRight();
+      set_rs232_data('g');
       break;
-    case 'v':                                                               // Fasten gas valve
+    case 'v':
+      // Fasten gas valve
       spinLeft();
+      set_rs232_data('v');
       break;
     default:
       asm("nop");
     }
-    set_rs232_data(data);
   }
   
   return 0;
 }
 
-// ºñ¹Ğ¹øÈ£ **** lcd Ãâ·Â ÇÔ¼ö
+// ÂºÃ±Â¹ÃÂ¹Ã¸ÃˆÂ£ **** lcd ÃƒÃ¢Â·Ã‚ Ã‡Ã”Â¼Ã¶
 void encryption(void) {
   if(number==0){
     COMMAND(0xcc);
@@ -409,23 +372,25 @@ void encryption(void) {
 
 void boiler(void) {
   unsigned char i;
-  // µğ½ºÇÃ·¹ÀÌ Å¬¸®¾î
+  // ÂµÃ°Â½ÂºÃ‡ÃƒÂ·Â¹Ã€ÃŒ Ã…Â¬Â¸Â®Â¾Ã®
   COMMAND(0x01);
-  // 1¶óÀÎ µ¥ÀÌÅÍ Ãâ·Â
+  // 1Â¶Ã³Ã€Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
   COMMAND(0x02);
   for (i = 0; i < 16; i++) {
     CHAR_O(Boiler1[i]);
   }
-  // 2¶óÀÎ µ¥ÀÌÅÍ Ãâ·Â
+  // 2Â¶Ã³Ã€Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
   COMMAND(0xc0);
   for (i = 0; i < 16; i++) {
     CHAR_O(Boiler2[i]);
   }
-  // ¿Âµµ ½ÊÀÇ ÀÚ¸®,ÀÏÀÇ ÀÚ¸® ±âº»°ª Ãâ·Â
+  // Â¿Ã‚ÂµÂµ Â½ÃŠÃ€Ã‡ Ã€ÃšÂ¸Â®,Ã€ÃÃ€Ã‡ Ã€ÃšÂ¸Â® Â±Ã¢ÂºÂ»Â°Âª ÃƒÃ¢Â·Ã‚
   COMMAND(0xce);
-  CHAR_O(0x31);															//CHAR_O(temperature1);
+  CHAR_O(0x31);
+  //CHAR_O(temperature1);
   COMMAND(0xcf);
-  CHAR_O(0x38);															//CHAR_O(temperature2);
+  CHAR_O(0x38);
+  //CHAR_O(temperature2);
 }
 
 // Catch 4x4 Hex Keypad Input
@@ -460,6 +425,7 @@ void SCAN2(void)
   
   temp = PINA;
   temp = (temp >> 4) | 0xf0;
+  // i=0 error?
   for (i=0; i<4; i++) {
     if (!(temp & 0x01)) {
       key1 = KEY; FLAG = 0;
@@ -543,8 +509,7 @@ int password_checker(void)
   if(!(passwordWrong)) {                                             // When password wrong (return 0)
     set_rs232_data('w');
     return 0;  
-  } else {                                                                  // When password correct (return 1)
-    set_rs232_data('u');  
+  } else {                                                                  // When password correct (return 1) 
     return 1;
   }
 }
@@ -553,15 +518,6 @@ int password_checker(void)
 int init_devices(void)
 {
   unsigned int delay_time = 60000;
-  /*
-  // Check Debug LED
-  //PORTD = 0xf3;
-  while(delay_time--);
-  //PORTD = PORTD << 1;
-  delay_time = 60000;
-  while(delay_time--);
-  //PORTD = PORTD << 1;
-  */
   
   // Check step motor left and right
   spinCount = 10;
@@ -604,12 +560,10 @@ int main(void) {
   L_INIT();			                                                //DISPLAY function for MDA_Multi (LCD4.H)
   DISPLAY();
   
-  PORTC = 0xff;
-  PORTD = 0xfe;
-  
-  //DDD5 = 1;
-  //PD5 = 1;
-  //I = 1;                                                                        // All interrupts enable
+  DDD5 = 1;
+  PD5 = 1;
+  OCIE1A = 0;
+  I = 0;     
   
   do {
     // Get data from UART and command informaions  
@@ -685,17 +639,17 @@ int main(void) {
             pwd_check_array = 0;
             delay_count = SCAN_SPEED;
             
-            // LCD Å¬¸®¾î
+            // LCD Ã…Â¬Â¸Â®Â¾Ã®
             COMMAND(0x01);
-            // 1¶óÀÎ µ¥ÀÌÅÍ Ãâ·Â
-            COMMAND(0x02);  // Ä¿¼­¸¦ È¨À¸·Î ¼Â
+            // 1Â¶Ã³Ã€Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
+            COMMAND(0x02);  // Ã„Â¿Â¼Â­Â¸Â¦ ÃˆÂ¨Ã€Â¸Â·Ã Â¼Ã‚
             for (k = 0; k < 16; k++) {
-              CHAR_O(Door_lock1[k]);                               // µ¥ÀÌÅÍ¸¦ LCD·Î µ¥ÀÌÅÍ Ãâ·Â
+              CHAR_O(Door_lock1[k]);                               // ÂµÂ¥Ã€ÃŒÃ…ÃÂ¸Â¦ LCDÂ·Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
             }
-            // 2¶óÀÎ µ¥ÀÌÅÍ Ãâ·Â
-            COMMAND(0xc0);  // Ä¿¼­¸¦ ¶óÀÎ 2·Î ¼Â
+            // 2Â¶Ã³Ã€Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
+            COMMAND(0xc0);  // Ã„Â¿Â¼Â­Â¸Â¦ Â¶Ã³Ã€Ã 2Â·Ã Â¼Ã‚
             for (k = 0; k < 16; k++) {
-              CHAR_O(door_modified[k]);                              // µ¥ÀÌÅÍ¸¦ LCD·Î µ¥ÀÌÅÍ Ãâ·Â
+              CHAR_O(KeyChange[k]);                              // ÂµÂ¥Ã€ÃŒÃ…ÃÂ¸Â¦ LCDÂ·Ã ÂµÂ¥Ã€ÃŒÃ…Ã ÃƒÃ¢Â·Ã‚
             }
             number=0;
           }
@@ -714,123 +668,122 @@ int main(void) {
       }
       
       if(pwd_correct_incorrect == 1) {                              // When password correct (door is unlocked)
-			door_lock_unlock('u');
-			//avr_sound(1);
-			pwd_correct_incorrect = 0;                                    // Set default
+			door_unlock();
+			pwd_correct_incorrect = avr_sound(1);
+			set_rs232_data('u');
       }
-    } else if (X1) {                                                      // 2. Door lock & Fasten gas valve(step motor close) process
-	  //avr_sound(2);
-	  door_lock_unlock('l');												// Screen door is locked
+    } else if (X1) {                                                      // 2. Door lock & Step Motor Close Process
       spinLeft();                                                           // Fasten gas valve
+      avr_sound(2);
       set_rs232_data('v');                                              // Set rs232 data (v)
     } else if (X2) {                                                      // 3.Rotary Switch Boiler Process
-      r = PINB;                                                             // rÀÌ¶ó´Â »ó¼ö¿¡ Æ÷Æ®BÀÇ ÀÔ·ÂÇÉ ¾îµå·¹½º¸¦ ³Ö´Â´Ù.
-      if(LCD[r&0x0f]==0){                                              // 18µµ = ROTARY B(0)
+      r = PINB;                                                             // rÃ€ÃŒÂ¶Ã³Â´Ã‚ Â»Ã³Â¼Ã¶Â¿Â¡ Ã†Ã·Ã†Â®BÃ€Ã‡ Ã€Ã”Â·Ã‚Ã‡Ã‰ Â¾Ã®ÂµÃ¥Â·Â¹Â½ÂºÂ¸Â¦ Â³Ã–Â´Ã‚Â´Ã™.
+      if(LCD[r&0x0f]==0){                                              // 18ÂµÂµ = ROTARY B(0)
         COMMAND(0x01);
         boiler();
         delay(65000);
         // while(LCD[r&0x0f]==0);
-        // while(PINB==0); or if ¹® ¹Û¿¡ ÀÛ¼º.
+        // while(PINB==0); or if Â¹Â® Â¹Ã›Â¿Â¡ Ã€Ã›Â¼Âº.
       }
-      else if(LCD[r&0x0f]==1){ // 19µµ = 1
+      else if(LCD[r&0x0f]==1){ // 19ÂµÂµ = 1
         COMMAND(0xce);
         CHAR_O(0x31);
         COMMAND(0xcf);
         CHAR_O(0x39);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==2){ // 20µµ = 2
+      else if(LCD[r&0x0f]==2){ // 20ÂµÂµ = 2
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x30);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==3){ // 21µµ = 3
+      else if(LCD[r&0x0f]==3){ // 21ÂµÂµ = 3
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x31);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==4){ // 22µµ = 4
+      else if(LCD[r&0x0f]==4){ // 22ÂµÂµ = 4
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x32);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==5){ // 23µµ = 5
+      else if(LCD[r&0x0f]==5){ // 23ÂµÂµ = 5
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x33);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==6){ // 24µµ = 6
+      else if(LCD[r&0x0f]==6){ // 24ÂµÂµ = 6
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x34);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==7){ // 25µµ = 7
+      else if(LCD[r&0x0f]==7){ // 25ÂµÂµ = 7
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x35);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==8){ // 26µµ = 8
+      else if(LCD[r&0x0f]==8){ // 26ÂµÂµ = 8
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x36);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==9){ // 27µµ = 9
+      else if(LCD[r&0x0f]==9){ // 27ÂµÂµ = 9
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x37);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==10){ // 28µµ = A
+      else if(LCD[r&0x0f]==10){ // 28ÂµÂµ = A
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x38);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==11){ // 29µµ = B
+      else if(LCD[r&0x0f]==11){ // 29ÂµÂµ = B
         COMMAND(0xce);
         CHAR_O(0x32);
         COMMAND(0xcf);
         CHAR_O(0x39);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==12){ // 30µµ = C
+      else if(LCD[r&0x0f]==12){ // 30ÂµÂµ = C
         COMMAND(0xce);
         CHAR_O(0x33);
         COMMAND(0xcf);
         CHAR_O(0x30);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==13){ // 31µµ = D
+      else if(LCD[r&0x0f]==13){ // 31ÂµÂµ = D
         COMMAND(0xce);
         CHAR_O(0x33);
         COMMAND(0xcf);
         CHAR_O(0x31);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==14){ // 32µµ = E
+      else if(LCD[r&0x0f]==14){ // 32ÂµÂµ = E
         COMMAND(0xce);
         CHAR_O(0x33);
         COMMAND(0xcf);
         CHAR_O(0x32);
         delay(65000);
       }
-      else if(LCD[r&0x0f]==15){ // 33µµ = F
+      else if(LCD[r&0x0f]==15){ // 33ÂµÂµ = F
         COMMAND(0xce);
         CHAR_O(0x33);
         COMMAND(0xcf);
@@ -849,7 +802,8 @@ int main(void) {
     }
     // 4.Heating Gas Valve On/Off Process 
     else if (X3) {
-      spinRight();
+		spinRight();
+		set_rs232_data('g');
     }
   } while (1);
 }

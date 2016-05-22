@@ -2,36 +2,35 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>2250010393</fileChecksum>
+  <fileChecksum>1560205041</fileChecksum>
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\io8535.h</file>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\..\..\..\..\..\..\[ROOT_NODE]</file>
-      <file>$TOOLKIT_DIR$\inc\bitdefinitions\io8535.inc</file>
-      <file>$PROJ_DIR$\Debug\Obj\CD_ATmega8535.pbd</file>
-      <file>$TOOLKIT_DIR$\src\template\cfg1toim.xcl</file>
-      <file>$PROJ_DIR$\Debug\Exe\CD_ATmega8535.hex</file>
-      <file>$PROJ_DIR$\Debug\Exe\CD_ATmega8535.d90</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.r90</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.__cstat.et</file>
       <file>$TOOLKIT_DIR$\src\template\cfgm8535.xcl</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r90</file>
+      <file>$TOOLKIT_DIR$\src\template\cfg1toim.xcl</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\CD_ATmega8535.pbd</file>
       <file>$PROJ_DIR$\LCD4.H</file>
-      <file>$TOOLKIT_DIR$\inc\iomacro.h</file>
+      <file>$TOOLKIT_DIR$\inc\bitdefinitions\io8535.inc</file>
       <file>$TOOLKIT_DIR$\lib\clib\cl1t-ec_mul.r90</file>
+      <file>$PROJ_DIR$\Debug\Exe\CD_ATmega8535.hex</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.__cstat.et</file>
+      <file>$TOOLKIT_DIR$\inc\io8535.h</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\..\[ROOT_NODE]</file>
+      <file>$TOOLKIT_DIR$\inc\iomacro.h</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 0</file>
+          <file> 1</file>
         </tool>
         <tool>
           <name>ICCAVR</name>
-          <file> 9</file>
+          <file> 2</file>
         </tool>
         <tool>
           <name>__cstat</name>
@@ -41,29 +40,20 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 12 1 13 4</file>
+          <file> 6 11 13 7</file>
         </tool>
         <tool>
           <name>ICCAVR</name>
-          <file> 1 13 4 12</file>
+          <file> 11 13 7 6</file>
         </tool>
       </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 7 8</file>
-        </tool>
-      </outputs>
     </file>
     <file>
       <name>$PROJ_DIR$\Debug\Exe\CD_ATmega8535.hex</name>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 11 6 9 14</file>
+          <file> 0 3 2 8</file>
         </tool>
       </inputs>
     </file>
@@ -72,7 +62,16 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 7</file>
+          <file> 9</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\..\[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 9</file>
         </tool>
       </outputs>
     </file>

@@ -2,8 +2,7 @@
     /* ====================$andCommGet variable parameters====================
     * 'u' : Doorlock unlock 
     * 'l' : Doorlock lock
-    * 't' : Boiler temp increase
-    * 'b' : Boiler temp decrease
+    * '0' ~ 'f' : Boiler temp control
     * 'g' : Loosen gas valve
     * 'v' : Fasten gas valve
     */
@@ -151,7 +150,7 @@
     // Check client_id between saved raspberry data and received android data
     $cliendIDChecker = strcmp($andClientId, $rpiClientId);
     if($cliendIDChecker != 0) {
-        rpiResetData($andClientId, $andModeGet, $andCommGet, $avrBoilerTemp);
+        rpiResetData($andClientId, $andModeGet, $andCommGet);
         echo("Client id sent from android not matched! andClientId : $andClientId, rpiClientId : $rpiClientId\n");
     }
 

@@ -145,20 +145,20 @@
         <option>
           <name>Input variant</name>
           <version>36</version>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>Input description</name>
-          <state>Automatic choice of formatter.</state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>Output variant</name>
           <version>36</version>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>Automatic choice of formatter.</state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
@@ -324,7 +324,7 @@
         <option>
           <name>CCAllowList</name>
           <version>3</version>
-          <state>111111</state>
+          <state>000000</state>
         </option>
         <option>
           <name>CCCrossCallPassesList</name>
@@ -488,11 +488,11 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>3</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>3</state>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -722,7 +722,7 @@
         <option>
           <name>OutputFormat</name>
           <version>11</version>
-          <state>22</state>
+          <state>23</state>
         </option>
         <option>
           <name>FormatVariant</name>

@@ -25,7 +25,6 @@ int avr_maria_set(int avr_get_count, char avr_read_content)
 	int rpi_query_check = -1;							// Check query is proceeded (Fail : -1, Proceeded : 0)
 	int query_retry_count = 0;							// Plus count when mysql_query is failed (Maximum : 5)
 	char cid[30] = {'\0'};								// Command ID (Primary key of table)
-	char avr_boiler_temp[2] = {0};						// Insert boiler temp to database
 	char avr_query_statement[1024];						// Set AVR query to insert
 	
 	time_t server_time = time(NULL);					// Get current time function
@@ -51,8 +50,8 @@ int avr_maria_set(int avr_get_count, char avr_read_content)
 	}
 	
 	// Make insert query and send query
-	sprintf(avr_query_statement, "INSERT INTO rpi_avr (cid, client_id, rpi_id, avr_id, avr_data, avr_param) VALUES "
-								 "('%s', '%s', '%s', '%s', '%c', '%s')", cid, CLIENT_ID, RPI_ID, AVR_ID, avr_read_content, avr_boiler_temp);
+	sprintf(avr_query_statement, "INSERT INTO rpi_avr (cid, client_id, rpi_id, avr_id, avr_data) VALUES "
+								 "('%s', '%s', '%s', '%s', '%c')", cid, CLIENT_ID, RPI_ID, AVR_ID, avr_read_content);
 								 
 	for(query_retry_count = 0; query_retry_count < 5; query_retry_count++) {
 		rpi_query_check = mysql_query(maria_connection, avr_query_statement);

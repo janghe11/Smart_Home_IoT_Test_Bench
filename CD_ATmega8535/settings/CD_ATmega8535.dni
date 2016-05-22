@@ -8,31 +8,6 @@ UseTrigger=1
 TriggerName=main
 LimitSize=0
 ByteLimit=50
-[DebugChecksum]
-Checksum=-1146632955
-[CodeCoverage]
-Enabled=_ 0
-[CallStack]
-ShowArgs=0
-[Disassembly]
-MixedMode=1
-[DriverProfiling]
-Enabled=0
-Mode=1
-Graph=0
-Symbiont=0
-Exclusions=
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
-[CallStackLog]
-Enabled=0
-[CallStackStripe]
-ShowTiming=1
 [DataLog]
 LogEnabled=0
 GraphEnabled=0

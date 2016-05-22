@@ -75,8 +75,7 @@ int passwordWrong; 										 // Check Password (+1 if password is wrong)
 int pwd_correct_incorrect = 0;                                                               // Get password_checker(); return value
 // ºñ¹Ð¹øÈ£ * Ç¥½Ã Á¦¾î º¯¼ö
 int number = 0;
-unsigned int sound_count = 0;                                                        // Set count for sound output
-unsigned char sound_tone = 0;
+volatile unsigned int sound_count = 0;                                                        // Set count for sound output
 #pragma vector = TIMER1_COMPA_vect
 __interrupt void COMP_A(void)
 {

@@ -60,7 +60,7 @@ apt-get install -y phpmyadmin
 # Create database and_rpi_avr and create table rpi_avr
 mysql -uroot -praspberry -e "CREATE DATABASE and_rpi_avr"
 mysql -uroot -praspberry -e "USE and_rpi_avr"
-mysql -uroot -praspberry -Dand_rpi_avr -e "CREATE TABLE rpi_avr (cid char(30) NOT NULL, client_id char(30) NOT NULL, rpi_id char(20) NOT NULL, avr_id char(20) NOT NULL, avr_data char(1) NOT NULL, avr_param char(2) NULL DEFAULT NULL, rpi_time TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(cid)) CHARACTER SET utf8 COLLATE utf8_general_ci"
+mysql -uroot -praspberry -Dand_rpi_avr -e "CREATE TABLE rpi_avr (cid char(30) NOT NULL, client_id char(30) NOT NULL, rpi_id char(20) NOT NULL, avr_id char(20) NOT NULL, avr_data char(1) NOT NULL, rpi_time TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(cid)) CHARACTER SET utf8 COLLATE utf8_general_ci"
 
 # Insert basic data to database for android
 
@@ -80,8 +80,7 @@ chown root:root /etc/apache2/sites-available/000-default.conf
 
 # Install netdata
 git clone https://github.com/firehol/netdata.git --depth=1 /home/pi/public_html/netdata
-chown www-data:www-data -R /home/pi/public_html/netdata
-/home/pi/public_html/netdata/netdata-installer.sh --dont-wait --zlib-is-really-here
+sh /home/pi/public_html/netdata/netdata-installer.sh --dont-wait
 
 # Compile and install avr_daemon
 gcc -o /home/pi/public_html/avr_daemon /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/avr_daemon.c `mysql_config --cflags --libs`

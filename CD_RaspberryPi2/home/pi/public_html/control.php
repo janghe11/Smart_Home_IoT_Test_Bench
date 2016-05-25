@@ -1,10 +1,12 @@
 <?php
-    /* ====================$andCommGet variable parameters====================
-    * 'u' : Doorlock unlock 
-    * 'l' : Doorlock lock
-    * '0' ~ 'f' : Boiler temp control
-    * 'g' : Loosen gas valve
-    * 'v' : Fasten gas valve
+    /* ====================RS232 data protocol====================
+     * unsigned char 'w' : Password wrong
+     * unsigned char 'p' : When password is pressed
+     * unsigned char 'u' : Doorlock unlock 
+     * unsigned char 'l' : Doorlock lock
+     * unsigned char '0' ~ 'f' : Boiler temperature control
+     * unsigned char 'g' : Loosen gas valve
+     * unsigned char 'v' : Fasten gas valve
     */
     $andClientId = null;        // Check client_id(Android Saved Id, Default : null)
     $andCommGet = null;         // Get command from Android for AVR (Default : null)

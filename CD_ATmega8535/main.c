@@ -31,26 +31,27 @@
 #define ENABLE	             1
 #define DISABLE	     0
 
+// 4x4 Keypad ASCII code
 __flash unsigned char KCODE[16] = {0x00, 0x04, 0x08, 0x0c, 0x01, 0x05, 0x09, 0x0d, 0x02, 0x06, 0x0a, 0x0e, 0x03, 0x07, 0x0b, 0x0f};
+// Step motor spin angle ASCII code
 __flash unsigned char SPINANGLE[8] = {0x04, 0x0c, 0x08, 0x48, 0x40, 0xc0, 0x80, 0x84};
 
 // LCD ÃÊ±â Ãâ·Â È­¸é
 unsigned char msg1[]="**** Hello **** ";
 unsigned char msg2[]="PUSH Button Plz ";
-
-// 1.µµ¾î¶ô OPEN LCD Ãâ·Â È­¸é
+// 1-1.µµ¾î¶ô OPEN LCD Ãâ·Â È­¸é
 __flash unsigned char Door_lock1[] = "1-Door Lock Fun?";
 __flash unsigned char Door_lock2[] = "2-PASSWORD :    ";
-
-// 2.ÆÐ½º¿öµå ÀÏÄ¡ ¾ð¶ô Ãâ·Â È­¸é
+__flash unsigned char door_modified[] = "PWD Modified    ";
+// 1-2.ÆÐ½º¿öµå ÀÏÄ¡ ¾ð¶ô Ãâ·Â È­¸é
 __flash unsigned char Un_lock1[] = " PASSWORD  MATCH";
 __flash unsigned char Un_lock2[] = " ** Door OPEN **";
-
-// 3.º¸ÀÏ·¯ LCD Ãâ·Â È­¸é
+// 2.º¸ÀÏ·¯ LCD Ãâ·Â È­¸é
 __flash unsigned char Boiler1[] = "1-Boiler Fun?   ";
 __flash unsigned char Boiler2[] = "2-Temperature:  ";
-
-__flash unsigned char KeyChange[] = "PWD Modified";
+// 3. Door locked Character
+__flash unsigned char door_locked1[] = " STAY OUT MODE  ";
+__flash unsigned char door_locked2[] = "**Door Locked** ";
 
 #include "LCD4.h"
 // Á¦¾î º¯¼ö
@@ -70,7 +71,7 @@ unsigned char FLAG;                                                             
 unsigned char KEY2;
 unsigned int  delay_count = SCAN_SPEED;                         	         // Delay count for key scan
 unsigned char check_password[] = {0x0f, 0x0f, 0x0f, 0x0f}; 		 // Saved password (default is ffff)
-unsigned char set_password[] = {0x04, 0x05, 0x06, 0x07};
+unsigned char set_password[] = {0x04, 0x05, 0x06, 0x07};				// Save new password (default is 4567)
 int passwordWrong; 										 // Check Password (+1 if password is wrong)
 int pwd_correct_incorrect = 0;                                                               // Get password_checker(); return value
 // ºñ¹Ð¹øÈ£ * Ç¥½Ã Á¦¾î º¯¼ö
@@ -82,7 +83,8 @@ __interrupt void COMP_A(void)
   sound_count--;
 }
 
-unsigned int spinCount, spinStep; 							 // Step Motor counts
+unsigned int stepmotor_spin_count = 0;
+unsigned int stepmotor_spin_step = 0; 							 // Step Motor counts
 
 int delay(unsigned int i) {
   while (i--);
@@ -202,6 +204,30 @@ void door_unlock(void) {
   number=0;
 }
 
+// Rotate step motor 180 degree left or right (v -> left, g -> right)
+int stepmotor_spin(unsigned char data) {
+	stepmotor_spin_count = 100;
+	if(data == 'v') {
+		stepmotor_spin_step = 6;
+		do {
+			PORTD = SPINANGLE[stepmotor_spin_step];
+			stepmotor_spin_step = stepmotor_spin_step - 2;
+			stepmotor_spin_step &= 0x07;
+			delay(60000);
+		}while(stepmotor_spin_count--);
+	} else if(data == 'g') {
+		stepmotor_spin_step = 0;
+		do {
+			PORTD = SPINANGLE[stepmotor_spin_step];
+			stepmotor_spin_step = stepmotor_spin_step + 2;
+			stepmotor_spin_step &= 0x07;
+			delay(60000);
+		}while(stepmotor_spin_count--);
+	}
+	
+	return 0;
+}
+/*
 // Rotate Step Motor 180 left
 int spinLeft(void) {
   spinCount = 100;
@@ -229,6 +255,7 @@ int spinRight(void) {
   
   return 0;
 }
+*/
 
 int init_rs232(void)
 {
@@ -260,7 +287,7 @@ int rs232_get_command(unsigned char data)
   unsigned char tens_digit = 0;
   unsigned char one_digit = 0;
   unsigned char boiler_temp = 0;
-  
+  // Boiler temperature control 0 ~ f
   if((data >= '0') && (data <= '9')) {                                	// Data 0 ~ 9
     COMMAND(0x01);                                                    	// Clear screen
     COMMAND(0x02);                                                    	// Set cursor to 1st line
@@ -293,7 +320,7 @@ int rs232_get_command(unsigned char data)
     CHAR_O(one_digit);
     set_rs232_data(data);
     
-  } else if((data >= 'a') && (data <= 'f')) {                     		// data a ~ c
+  } else if((data >= 'a') && (data <= 'f')) {                     		// if data a ~ f
     COMMAND(0x01);                                                    	// Clear screen
     COMMAND(0x02);                                                    	// Set cursor to 1st line
     for (show_char = 0; show_char < 16; show_char++) {     				// Show basic strings for boiler
@@ -321,24 +348,23 @@ int rs232_get_command(unsigned char data)
     CHAR_O(one_digit);
     set_rs232_data(data);
   } else {
+	// Door lock / unlock and gas valve fasten / loosen
     switch(data) {
-    case 'u':
-      // Doorlock unlock
+    case 'u':	// Doorlock unlock
       door_unlock();
       set_rs232_data('u');
       break;
-    case 'l':
-      // Doorlock lock
+    case 'l':	// Doorlock lock
       set_rs232_data('l');
       break;
-    case 'g':
-      // Loosen gas valve
-      spinRight();
+    case 'g':	// Loosen gas valve
+      stepmotor_spin(data);
+      //spinRight();
       set_rs232_data('g');
       break;
-    case 'v':
-      // Fasten gas valve
-      spinLeft();
+    case 'v':	// Fasten gas valve
+      stepmotor_spin(data);
+      //spinLeft();
       set_rs232_data('v');
       break;
     default:
@@ -519,25 +545,25 @@ int init_devices(void)
   unsigned int delay_time = 60000;
   
   // Check step motor left and right
-  spinCount = 10;
-  spinStep = 6;
+  stepmotor_spin_count = 10;
+  stepmotor_spin_step = 6;
   delay_time = 100;
   do {
-    PORTD = SPINANGLE[spinStep];
-    spinStep -= 2;
-    spinStep &= 0x07;
+    PORTD = SPINANGLE[stepmotor_spin_step];
+    stepmotor_spin_step -= 2;
+    stepmotor_spin_step &= 0x07;
     while(delay_time--);
-  }while(spinCount--);
+  }while(stepmotor_spin_count--);
   
-  spinCount = 10;
-  spinStep = 0;
+  stepmotor_spin_count = 10;
+  stepmotor_spin_step = 0;
   delay_time = 100;
   do {
-    PORTD = SPINANGLE[spinStep];
-    spinStep += 2;
-    spinStep &= 0x07;
+    PORTD = SPINANGLE[stepmotor_spin_step];
+    stepmotor_spin_step += 2;
+    stepmotor_spin_step &= 0x07;
     while(delay_time--);
-  }while(spinCount--);
+  }while(stepmotor_spin_count--);
   
   return 0;
 }
@@ -672,7 +698,8 @@ int main(void) {
 			set_rs232_data('u');
       }
     } else if (X1) {                                                      // 2. Door lock & Step Motor Close Process
-      spinLeft();                                                           // Fasten gas valve
+      stepmotor_spin('v');
+      //spinLeft();                                                           // Fasten gas valve
       avr_sound(2);
       set_rs232_data('v');                                              // Set rs232 data (v)
     } else if (X2) {                                                      // 3.Rotary Switch Boiler Process
@@ -801,7 +828,8 @@ int main(void) {
     }
     // 4.Heating Gas Valve On/Off Process 
     else if (X3) {
-		spinRight();
+		stepmotor_spin('g');
+		//spinRight();
 		set_rs232_data('g');
     }
   } while (1);

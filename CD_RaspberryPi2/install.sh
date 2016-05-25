@@ -27,7 +27,7 @@ apt-get update
 apt-get -y dist-upgrade
 
 # Basic installation
-apt-get install -y vim gcc apache2 php5 git libmysqlclient-dev zlib1g-dev autoconf autogen
+apt-get install -y vim gcc apache2 php5 git libmysqlclient-dev zlib1g-dev uuid-dev libmnl-dev autoconf autogen jq nodejs
 
 # MariaDB install
 echo "mariadb-server-10.0 mariadb-server/root_password password raspberry" | sudo debconf-set-selections
@@ -79,7 +79,7 @@ chown root:root /etc/apache2/apache2.conf
 chown root:root /etc/apache2/sites-available/000-default.conf
 
 # Install netdata
-\cp -r /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/netdata /home/pi/public_html
+git clone https://github.com/firehol/netdata.git --depth=1 /home/pi/public_html/netdata
 chown www-data:www-data -R /home/pi/public_html/netdata
 /home/pi/public_html/netdata/netdata-installer.sh --dont-wait --zlib-is-really-here
 

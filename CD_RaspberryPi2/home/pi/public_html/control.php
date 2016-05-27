@@ -76,7 +76,6 @@
             $mariaRowArray['rpi_id'] = $mariaRow['rpi_id'];
             $mariaRowArray['avr_id'] = $mariaRow['avr_id'];
             $mariaRowArray['avr_data'] = $mariaRow['avr_data'];
-            $mariaRowArray['avr_param'] = $mariaRow['avr_param'];
             $mariaRowArray['rpi_time'] = $mariaRow['rpi_time'];
                    
             array_push($mariaToJson, $mariaRowArray);

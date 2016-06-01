@@ -12,14 +12,7 @@ if [ "$UID" -ne "$ROOT_UID" ] ; then
 	exit 1
 fi
 
-if mount | grep "on /dev/ttyUSB0 type" > /dev/null
-then
-	echo "RS-232 Cable (ttyUSB0) is connected. Keep proceed to install...\n"
-else
-	echo "RS-232 Cable (ttyUSB0) is not connected! Please check your device again.\n"
-	exit 2
-fi
-
+echo "USB to RS-232C cable must be connected before starting process.\n"
 echo "Start to install Smart Home IoT Test Bench on Raspberry Pi. It takes almost 25 - 30 minutes...\n"
 
 # Check repositories update and dist-upgrade
@@ -27,7 +20,7 @@ apt-get update
 apt-get -y dist-upgrade
 
 # Basic installation
-apt-get install -y vim gcc apache2 php5 git libmysqlclient-dev zlib1g-dev uuid-dev libmnl-dev autoconf autogen jq nodejs
+apt-get install -y vim gcc apache2 php5 git libmysqlclient-dev zlib1g-dev uuid-dev libmnl-dev autoconf autogen jq nodejs chkconfig
 
 # MariaDB install
 echo "mariadb-server-10.0 mariadb-server/root_password password raspberry" | sudo debconf-set-selections

@@ -1,6 +1,7 @@
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides: avr_daemon
+# chkconfig : 35 90 20
 # Default-Start: S
 # Short-Description:  Enable RS-232C polling from AVR.
 # Description: Scan RS-232C polling realtime from ttyUSB0 when AVR send unsigned char data.

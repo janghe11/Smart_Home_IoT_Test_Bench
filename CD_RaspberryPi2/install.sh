@@ -73,7 +73,8 @@ chown root:root /etc/apache2/sites-available/000-default.conf
 
 # Install netdata
 git clone https://github.com/firehol/netdata.git --depth=1 /home/pi/public_html/netdata
-sh /home/pi/public_html/netdata/netdata-installer.sh --dont-wait
+chown -R pi:pi /home/pi/public_html/netdata
+sh ~/public_html/netdata/netdata-installer.sh --dont-wait
 
 # Compile and install avr_daemon
 gcc -o /home/pi/public_html/avr_daemon /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/avr_daemon.c `mysql_config --cflags --libs`
@@ -98,6 +99,10 @@ echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf
 wpa_supplicant -B -c/etc/wpa_supplicant/wpa_supplicant.conf -iwlan0
 
 # Add control.php and avr_daemon daemon to /etc/init.d
+\cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/init.d/avr_daemon.sh /etc/init.d
+chmod +x /etc/init.d/avr_daemon.sh /etc/init.d/avr_daemon.sh
+chown root:root /etc/init.d/avr_daemon.sh /etc/init.d/avr_daemon.sh
+#chkconfig --add /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/init.d/avr_daemon.sh
 
 # Cleaning and finish
 apt-get -y autoremove

@@ -17,6 +17,7 @@
 * unsigned char 'u' : Doorlock unlock 
 * unsigned char 'l' : Doorlock lock
 * unsigned char '0' ~ 'f' : Boiler temperature control
+* unsigned char 'b' : Boiler off
 * unsigned char 'g' : Loosen gas valve
 * unsigned char 'v' : Fasten gas valve
 */

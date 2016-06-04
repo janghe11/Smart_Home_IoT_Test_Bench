@@ -57,7 +57,7 @@
                 return 0;
             }   
         }
-        echo ("rpiAndCommCheck confirmed.\n");
+        //echo ("rpiAndCommCheck confirmed.\n");
         return 1;
     }
 
@@ -97,9 +97,9 @@
         
         $mariaRow = mysql_fetch_array($getMariaData, MYSQL_ASSOC);
         $mariaPreData = $mariaRow['cid'];
-        echo "mariaPreData['cid'] :";
-        echo $mariaPreData;
-        echo "\n";
+        //echo "mariaPreData['cid'] :";
+        //echo $mariaPreData;
+        //echo "\n";
         mysql_close($mariaConnect);
     }
 
@@ -115,12 +115,12 @@
         $mariaRow = mysql_fetch_array($getMariaData, MYSQL_ASSOC);
         $mariaFetchData['cid'] = $mariaRow['cid'];
         $mariaFetchData['avr_data'] = $mariaRow['avr_data'];
-        echo "mariaFetchData['cid'] :";
-        echo $mariaFetchData['cid'];
-        echo "\n";
-        echo "mariaFetchData['avr_data'] :";
-        echo $mariaFetchData['avr_data'];
-        echo "\n";
+        //echo "mariaFetchData['cid'] :";
+        //echo $mariaFetchData['cid'];
+        //echo "\n";
+        //echo "mariaFetchData['avr_data'] :";
+        //echo $mariaFetchData['avr_data'];
+        //echo "\n";
         
         mysql_close($mariaConnect);
         
@@ -144,15 +144,17 @@
     }
 
     //========== Start Main ==========//
-    $andClientId = $_POST["andClientId"];
-    $andModeGet = $_POST["andModeSet"];
-    $andCommGet = $_POST["avrCommSet"];
+    if (isset($_POST["andClientId"]) || isset($_POST["andModeSet"]) || isset($_POST["avrCommSet"])) {
+        $andClientId = $_POST["andClientId"];
+        $andModeGet = $_POST["andModeSet"];
+        $andCommGet = $_POST["avrCommSet"];   
+    }
 
     // Check client_id between saved raspberry data and received android data
     $cliendIDChecker = strcmp($andClientId, $rpiClientId);
     if($cliendIDChecker != 0) {
         rpiResetData($andClientId, $andModeGet, $andCommGet);
-        echo("Client id sent from android not matched! andClientId : $andClientId, rpiClientId : $rpiClientId\n");
+        //echo("Client id sent from android not matched! andClientId : $andClientId, rpiClientId : $rpiClientId\n");
     }
 
     if($andModeGet == 1) {                      // Mode 1 -> Status check mode.
@@ -168,21 +170,21 @@
             
             // loop until command fetch checker true
             while($rpiCmdFetchChecker == false) {
-                echo("First rpiComFetchChekcer : $rpiCmdFetchChecker\n");
+	    //echo("First rpiComFetchChekcer : $rpiCmdFetchChecker\n");
                 $rpiCmdFetchChecker = rpiCheckAvrFetch($mariaHost, $mariaUser, $mariaPassword, $mariaDBName, $andCommGet, $mariaPreData);
-                echo("AVR data not fetched yet. rpiCmdFetchChecker : $rpiCmdFetchChecker\n");
+                //echo("AVR data not fetched yet. rpiCmdFetchChecker : $rpiCmdFetchChecker\n");
                 sleep(1);
             }
             
-            echo("AVR data fetched!. rpiCmdFetchChecker : $rpiCmdFetchChecker\n");
+            //echo("AVR data fetched!. rpiCmdFetchChecker : $rpiCmdFetchChecker\n");
             andGetMaria($mariaHost, $mariaUser, $mariaPassword, $mariaDBName);
         } else {                                // andCommGet failed.
             rpiResetData($andClientId, $andModeGet, $andCommGet);
-            echo("Occured error while receiving command data from android. andCommGet : $andCommGet \n");
+            //echo("Occured error while receiving command data from android. andCommGet : $andCommGet \n");
         }
     } else {                                    // andModeGet failed.
         rpiResetData($andClientId, $andModeGet, $andCommGet);
-        echo("Android mode receive data error!\n");
+        //echo("Android mode receive data error!\n");
     }
 
     rpiResetData($andClientId, $andModeGet, $andCommGet);

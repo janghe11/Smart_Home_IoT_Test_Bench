@@ -100,10 +100,10 @@ echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf
 wpa_supplicant -B -c/etc/wpa_supplicant/wpa_supplicant.conf -iwlan0
 
 # Add control.php and avr_daemon daemon to /etc/init.d
-\cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/init.d/avr_daemon.sh /etc/init.d
-chmod +x /etc/init.d/avr_daemon.sh /etc/init.d/avr_daemon.sh
-chown root:root /etc/init.d/avr_daemon.sh /etc/init.d/avr_daemon.sh
-chkconfig --add avr_daemon.sh
+\cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/init.d/avr_daemon /etc/init.d
+chmod +x /etc/init.d/avr_daemon
+chown root:root /etc/init.d/avr_daemon
+chkconfig --add avr_daemon
 systemctl daemon-reload
 
 # Cleaning and finish

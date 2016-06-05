@@ -78,7 +78,6 @@ int avr_maria_set(int avr_get_count, char avr_read_content)
 	maria_connection = mysql_real_connect(&avr_maria, MARIA_CLOUD, MARIA_USER, MARIA_PASS, MARIA_DATABASE, 3306, (char *)NULL, 0);
 	if(maria_connection == NULL) {                                          // Check mariadb connection fail
 		printf("%s\n", mysql_error(&avr_maria));
-		exit(EXIT_FAILURE);
 	} else {
 		printf("* MariaDB in Microsoft Azure Cloud Server connected successfully. *\n");
 	}

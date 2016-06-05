@@ -9,10 +9,13 @@
 # Description: Scan RS-232C polling realtime from ttyUSB0 when AVR send unsigned char data.
 ### END INIT INFO
 
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+AVR_DAEMON_PATH=/usr/sbin/avr_daemon
+
 case "$1" in
   start)
    	echo -n "Starting avr_daemon : "
-   	daemon /usr/sbin/avr_daemon
+   	$AVR_DAEMON_PATH
     	;;
   stop)
     	;;

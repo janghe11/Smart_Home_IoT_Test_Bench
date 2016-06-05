@@ -11,18 +11,18 @@
 
 case "$1" in
   start)
-    echo -n "Starting avr_daemon : "
-    daemon /home/pi/public_html/avr_daemon
-    ;;
+   	echo -n "Starting avr_daemon : "
+   	daemon /usr/sbin/avr_daemon
+    	;;
   stop)
-    ;;
+    	;;
   restart)
-    echo -n "Restart avr_daemon : "
-    $0 stop
-    $0 start
-    ;;
+    	echo -n "Restart avr_daemon : "
+    	$0 stop
+    	$0 start
+    	;;
     *)
-  echo "Usage : $0 {start | stop | restart}"
-  exit 1
+  	echo "Usage : $0 {start | stop | restart}"
+  	exit 1
 esac
-  exit 0
+  	exit 0

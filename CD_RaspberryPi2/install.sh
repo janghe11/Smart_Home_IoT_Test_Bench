@@ -77,8 +77,9 @@ chown -R pi:pi /home/pi/public_html/netdata
 sh ~/public_html/netdata/netdata-installer.sh --dont-wait
 
 # Compile and install avr_daemon
-gcc -o /home/pi/public_html/avr_daemon /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/avr_daemon.c `mysql_config --cflags --libs`
-chown pi:pi /home/pi/public_html/avr_daemon
+gcc -o /usr/sbin/avr_daemon /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/avr_daemon.c `mysql_config --cflags --libs`
+chown root:root /usr/sbin/avr_daemon
+chmod 755 /usr/sbin/avr_daemon
 
 # Install control.php
 \cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/control.php /home/pi/public_html
@@ -102,7 +103,8 @@ wpa_supplicant -B -c/etc/wpa_supplicant/wpa_supplicant.conf -iwlan0
 \cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/init.d/avr_daemon.sh /etc/init.d
 chmod +x /etc/init.d/avr_daemon.sh /etc/init.d/avr_daemon.sh
 chown root:root /etc/init.d/avr_daemon.sh /etc/init.d/avr_daemon.sh
-#chkconfig --add /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/init.d/avr_daemon.sh
+chkconfig --add avr_daemon.sh
+systemctl daemon-reload
 
 # Cleaning and finish
 apt-get -y autoremove

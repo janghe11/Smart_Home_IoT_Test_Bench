@@ -51,7 +51,7 @@
             case 'v':
                 break;
             default:
-                echo("Android commnad token to AVR error.\n");
+                //echo("Android commnad token to AVR error.\n");
                 $andClientId = null;
                 $andCommGet = null;
                 return 0;

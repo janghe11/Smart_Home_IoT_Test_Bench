@@ -15,6 +15,7 @@
 #define CHECKING_TIME 	1000							// Manipulate poll time out.
 
 #define MARIA_HOST		"127.0.0.1"
+#define MARIA_CLOUD		"cloud.taeheejang.com"			// Insert your remote server here. Don't type http://
 #define MARIA_USER		"root"
 #define MARIA_PASS		"raspberry"
 #define MARIA_DATABASE	"and_rpi_avr"
@@ -47,25 +48,54 @@ int avr_maria_set(int avr_get_count, char avr_read_content)
 	
 	if(maria_connection == NULL) {						// Check mariadb connection fail
 		printf("%s\n", mysql_error(&avr_maria));
-		exit(1);
+		exit(EXIT_FAILURE);
 	} else {
-		printf("MariaDB connected successfully.\n");
+		printf("* MariaDB in Raspberry Pi connected successfully. *\n");
 	}
 	
 	// Make insert query and send query
 	sprintf(avr_query_statement, "INSERT INTO rpi_avr (cid, client_id, rpi_id, avr_id, avr_data) VALUES "
 								 "('%s', '%s', '%s', '%s', '%c')", cid, CLIENT_ID, RPI_ID, AVR_ID, avr_read_content);
-								 
-	for(query_retry_count = 0; query_retry_count < 5; query_retry_count++) {
+	
+	if(maria_connection != NULL) {
+		for(query_retry_count = 0; query_retry_count < 5; query_retry_count++) {
+			rpi_query_check = mysql_query(maria_connection, avr_query_statement);
+			if(rpi_query_check == 0) {
+				printf("cid %s data successfully inserted.\n", cid);
+				break;
+			} else {
+				printf("Failed to insert mariadb query. Retry. (Retry attempt : %d / 5)\n", query_retry_count + 1);
+				printf("%s\n", mysql_error(&avr_maria));
+				if(query_retry_count == 4) {
+					printf("Insert query is not available. Please check rpi_avr table and query again.\n");
+				}
+			}
+		}
+	}							 
+	
+	mysql_close(&avr_maria);
+	sleep(1);
+	
+	maria_connection = mysql_real_connect(&avr_maria, MARIA_CLOUD, MARIA_USER, MARIA_PASS, MARIA_DATABASE, 3306, (char *)NULL, 0);
+	if(maria_connection == NULL) {                                          // Check mariadb connection fail
+		printf("%s\n", mysql_error(&avr_maria));
+		exit(EXIT_FAILURE);
+	} else {
+		printf("* MariaDB in Microsoft Azure Cloud Server connected successfully. *\n");
+	}
+
+	if(maria_connection != NULL) {
+		for(query_retry_count = 0; query_retry_count < 5; query_retry_count++) {
 		rpi_query_check = mysql_query(maria_connection, avr_query_statement);
-		if(rpi_query_check == 0) {
-			printf("cid %s data successfully inserted.\n", cid);
-			break;
-		} else {
-			printf("Failed to insert mariadb query. Retry. (Retry attempt : %d / 5)\n", query_retry_count + 1);
-			printf("%s\n", mysql_error(&avr_maria));
-			if(query_retry_count == 4) {
-				printf("Insert query is not available. Please check rpi_avr table and query again.\n");
+			if(rpi_query_check == 0) {
+				printf("cid %s data successfully inserted.\n", cid);
+				break;
+			} else {
+				printf("Failed to insert mariadb query. Retry. (Retry attempt : %d / 5)\n", query_retry_count + 1)    ;
+				printf("%s\n", mysql_error(&avr_maria));
+				if(query_retry_count == 4) {
+					printf("Insert query is not available. Please check rpi_avr table and query again.\n");
+				}
 			}
 		}
 	}
@@ -87,7 +117,7 @@ int main(int argc, char* argv[])
    struct	pollfd	poll_events;        // Check polling event structure.
    int	poll_state = -1;				// Change poll_state when data is received. (Default : -1)
    int	avr_get_count = 0;				// Check count when data is sent from AVR (Set 0 when RPi reboot)
-   int maria_insert_check = -1;			// Check data inserted successfuly into mariaDB.
+   int maria_insert_check = -1;
 	
    // Open ttyUSB0 (Read and Write, NO CTTY, NO BLOCK)
    tty_usb = open( "/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NONBLOCK );

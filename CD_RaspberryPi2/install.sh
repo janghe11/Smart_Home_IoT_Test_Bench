@@ -74,7 +74,8 @@ chown root:root /etc/apache2/sites-available/000-default.conf
 # Install netdata
 git clone https://github.com/firehol/netdata.git --depth=1 /home/pi/public_html/netdata
 chown -R pi:pi /home/pi/public_html/netdata
-/home/pi/public_html/netdata/netdata-installer.sh --dont-wait
+cd /home/pi/public_html/netdata
+sh ./netdata-installer.sh --dont-wait
 
 # Compile and install avr_daemon
 gcc -o /usr/sbin/avr_daemon /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/home/pi/public_html/avr_daemon.c `mysql_config --cflags --libs`

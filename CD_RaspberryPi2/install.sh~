@@ -103,7 +103,7 @@ wpa_supplicant -B -c/etc/wpa_supplicant/wpa_supplicant.conf -iwlan0
 \cp /home/pi/CapstoneDesign_MicroProcessor/CD_RaspberryPi2/etc/init.d/avr_daemon /etc/init.d
 chmod +x /etc/init.d/avr_daemon
 chown root:root /etc/init.d/avr_daemon
-chkconfig --add avr_daemon.sh
+chkconfig --add avr_daemon
 systemctl daemon-reload
 
 # Cleaning and finish

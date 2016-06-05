@@ -48,7 +48,6 @@ int avr_maria_set(int avr_get_count, char avr_read_content)
 	
 	if(maria_connection == NULL) {						// Check mariadb connection fail
 		printf("%s\n", mysql_error(&avr_maria));
-		exit(EXIT_FAILURE);
 	} else {
 		printf("* MariaDB in Raspberry Pi connected successfully. *\n");
 	}

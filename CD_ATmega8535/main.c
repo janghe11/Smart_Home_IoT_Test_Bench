@@ -17,7 +17,7 @@
 * unsigned char 'u' : Doorlock unlock 
 * unsigned char 'l' : Doorlock lock
 * unsigned char '0' ~ 'f' : Boiler temperature control
-* unsigned char 'b' : Boiler off
+* unsigned char 'o' : Boiler off
 * unsigned char 'g' : Loosen gas valve
 * unsigned char 'v' : Fasten gas valve
 */
@@ -39,7 +39,7 @@
 #define    PD5        PORTD_Bit5
 
 // Doorlock Keyscan speed control
-#define SCAN_SPEED      3000
+#define SCAN_SPEED      1000
 #define ENABLE	             1
 #define DISABLE	     0
 
@@ -61,6 +61,9 @@ __flash unsigned char Un_lock2[] = " ** Door OPEN **";
 // 2.º¸ÀÏ·¯ LCD Ãâ·Â È­¸é
 __flash unsigned char Boiler1[] = "1-Boiler Fun?   ";
 __flash unsigned char Boiler2[] = "2-Temperature:  ";
+// 2-1. Turn off boiler
+__flash unsigned char boiler_off1[] = "ENERGY SAVE MODE";
+__flash unsigned char boiler_off2[] = "Temperature: OFF";
 // 3. Door locked Character
 __flash unsigned char door_locked1[] = " STAY OUT MODE  ";
 __flash unsigned char door_locked2[] = "**Door Locked** ";
@@ -349,6 +352,19 @@ int rs232_get_command(unsigned char data)
       stepmotor_spin(data);
       set_rs232_data(data);
       break;
+    case 'o':
+	  COMMAND(0x01);                                                    	// Clear screen
+      COMMAND(0x02);                                                    	// Set cursor to 1st line
+      for (show_char = 0; show_char < 16; show_char++) {     				// Show basic strings for boiler
+        CHAR_O(boiler_off1[show_char]);
+      }
+    
+      COMMAND(0xc0);                                                    	// Set cursor to 2nd line
+      for (show_char = 0; show_char < 16; show_char++) {
+        CHAR_O(boiler_off2[show_char]);
+      }
+      
+      set_rs232_data(data);
     default:
       asm("nop");
     }

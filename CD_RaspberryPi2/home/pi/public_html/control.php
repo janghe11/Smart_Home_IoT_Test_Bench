@@ -5,6 +5,7 @@
      * unsigned char 'u' : Doorlock unlock 
      * unsigned char 'l' : Doorlock lock
      * unsigned char '0' ~ 'f' : Boiler temperature control
+     * unsigned char 'o' : Boiler off
      * unsigned char 'g' : Loosen gas valve
      * unsigned char 'v' : Fasten gas valve
     */
@@ -49,6 +50,8 @@
             case 'g':
                 break;
             case 'v':
+                break;
+            case 'o':
                 break;
             default:
                 //echo("Android commnad token to AVR error.\n");

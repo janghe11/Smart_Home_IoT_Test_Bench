@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
     //------------------------------
     public void HttpPostData() throws IOException {
         try {
-            URL control_url = new URL("http://raspbi.taeheejan.com/control_test.php"); // URL 설정
+            URL control_url = new URL("http://localip/control.php"); // URL 설정
             HttpURLConnection http = (HttpURLConnection) control_url.openConnection(); // url을 연결한 객체 생성 접속
 
             http.setDefaultUseCaches(false); // 캐싱데이터 디폴트 값 설정

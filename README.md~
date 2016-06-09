@@ -95,9 +95,8 @@
 
 ####control.php data protocol information
 
-| **Command variables** | **Command character** | **Command name**                        | **Command function**                     | **_POST variables** |
-| -------------------------------- | -------------------------------- | -------------------------------------------- | -------------------------------------------- | --------------------------- |
-| $andClientId                        | KEY_VALUE                           | Match ID between android and RPi | strcmp($andClientId, $rpiClientId); | andClientId                    |
+| **Command variables** | **Command character** | **Command name**                        | **Command function**                                   | **_POST variables** |
+| -------------------------------- | -------------------------------- | -------------------------------------------- | ------------------------------------------------------ | --------------------------- |
+| $andClientId                        | KEY_VALUE                           | Match ID between android and RPi | strcmp($andClientId, $rpiClientId);                | andClientId                    |
 | $andModeGet                     | 1, 2                                          | Set command to RPi whether get database or set command to AVR | 1 → andGetMaria(~); / 2 → rpiAndCommCheck(~); | andModeSet |
-| $andCommGet                   | 0 ~ f, u, l, g, v, o                    | Request specific function of AVR      | avrSetComm($andCommGet, $avrDevId); | andCommSet |
-
+| $andCommGet                   | 0 ~ f, u, l, g, v, o                    | Request specific function of AVR      | avrSetComm($andCommGet, $avrDevId); | andCommSet                |

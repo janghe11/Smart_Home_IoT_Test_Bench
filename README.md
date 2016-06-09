@@ -28,12 +28,18 @@
 - **Development environment :** *AVR development →* Windows XP or 7 32bit / *Raspberry Pi →* Ubuntu 15.10 64bit or later / *Android →* Android Studio 1.5 or later
 - **Applications :** Apache2, mariaDB, PHPMyAdmin, etc.
 
-### Structures and flowcharts
+###AVR ATmega8535
 ####Brief of Smart Home IoT Test Bench structures
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart%20Home%20IoT%20Test%20Bench%20Structures.jpg)
 
+####Details of Smart Home IoT Test Bench structures
+![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart%20Home%20IoT%20Test%20Bench%20Structures(Details).jpg)
+
 ####AVR(ATmega8535 main.c) flowchart
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart%20Home%20IoT%20Test%20Bench%20Flowchart%20-%20ATmega8535%20(main.c).jpg)
+
+####DDR pin map
+
 
 ####Raspberry Pi 2 structures
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart%20Home%20Iot%20Test%20Bench%20Structures%20-%20Raspberry%20Pi.jpg)

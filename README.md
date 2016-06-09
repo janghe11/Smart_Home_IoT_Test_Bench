@@ -46,6 +46,16 @@
 
 ####Data transfer protocol information(RPi ↔ AVR)
 ※ All command characters are unsigned char.
+| **Command character**              | **Command name**        | **Available command functions**                                                                                                 |
+| ----------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 0 ~ f (0x30 ~ 0x39, 0x61 ~ 0x66) | Screen boiler temperature | rs232_get_command(‘0 ~ f’) / set_rs232_data(‘0 ~ f’)                                                               |
+| g (0x67)                                               | Loosen gas valve                   | rs232_get_command(‘g’)  / stepmotor_spin(‘g’) / set_rs232_data(‘g’)                                  |
+| l (0x6c)                                                 | Lock door                                | rs232_get_command(‘l’) / door_lock_unlock('l') / avr_sound(‘l’) / set_rs232_data(‘l’)      |
+| p (0x70)                                               | 4x4 Keypad is pressed         | avr_sound(‘p’) / set_rs232_data(‘p’)                                                                                                 |
+| u (0x75)                                               | Unlock door                           | rs232_get_command(‘u’) / door_lock_unlock('u') / avr_sound(‘u’) / set_rs232_data(‘u’) |
+| v (0x76)                                                | Fasten gas valve                   | rs232_get_command(‘v’) / stepmotor_spin(‘v’) / set_rs232_data(‘v’)                                      |
+| w (0x77)                                              | Process error                         | set_rs232_data(‘w’)                                                                                                                               |
+
 
 ####ATmega8535 main.c function information (17 functions)
 

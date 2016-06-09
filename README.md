@@ -58,7 +58,31 @@
 | w (0x77)                                              | Process error                         | set_rs232_data(‘w’)                                                                                                                               |
 
 
-####ATmega8535 main.c function information (17 functions)
+####ATmega8535 main.c function information (18 functions)
+
+| **Function name**  | **Parameters** | **Return datatype** | **Return value** | **Description**                                                                                    |
+| -------------------------- | --------------------- | --------------------------- | ----------------------- | ---------------------------------------------------------------------------- |
+| delay                               |                                  | int                                    | 0                                | Delay 65000 counts.                                                                             |
+| doorlock                        |                                  | void                                  |                                    | Show password input screen on LCD.                                             |
+| door_lock_unlock        | u, l                            | int                                    | 0                                 | Show password match or stay out mode screen on LCD.          |
+| stepmotor_spin            | v, g                           | int                                    | 0                                 | Rotate step motor left(v) or right(g).                                              |
+| init_rs232                      |                                  | int                                     | 0                                 | Initialize RS232 registers.                                                                   |
+| set_rs232_data             | unsigned char      | unsigned char               | 0                                 | Send 1byte unsigned char data from AVR via RS-232C cable. |
+| get_rs232_data            |                                  | unsigned char               | 0                                 |
+| encryption                      |
+| boiler                               |
+| SCAN ~ SCAN4            |                                   | void                                  |                                     |
+| init_devices                    |                                  | int                                     | 0                                 |
+| avr_sound                      | w, u, l, p                 | int                                     | 0                                  |
+| rs232_get_command | unsigned char       |int                                      | 0
+| encryption                      | void                         |
+| password_checker       |                                  | int                                      | 0, 1                             |
+
+####ATmega8535 main.c interrupts information
+
+| **Interrupt name**    | **Description** |
+| ---------------------------- |
+| TIMER1_COMPA_vect |
 
 ####Raspberry Pi 2 structures
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart%20Home%20Iot%20Test%20Bench%20Structures%20-%20Raspberry%20Pi.jpg)
@@ -71,3 +95,8 @@
 
 ####control.php data protocol information
 
+| **Command variables** | **Command character** | **Command name**                        | **Command function**                                   | **_POST variables** |
+| -------------------------------- | -------------------------------- | -------------------------------------------- | ------------------------------------------------------ | --------------------------- |
+| $andClientId                        | KEY_VALUE                           | Match ID between android and RPi | strcmp($andClientId, $rpiClientId);                | andClientId                    |
+| $andModeGet                     | 1, 2                                          | Set command to RPi whether get database or set command to AVR | 1 → andGetMaria(~); / 2 → rpiAndCommCheck(~); | andModeSet |
+| $andCommGet                   | 0 ~ f, u, l, g, v, o                    | Request specific function of AVR      | avrSetComm($andCommGet, $avrDevId); | andCommSet                |

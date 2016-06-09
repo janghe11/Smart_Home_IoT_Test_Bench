@@ -58,7 +58,7 @@ mysql -uroot -praspberry -Dand_rpi_avr -e "CREATE TABLE rpi_avr (cid char(30) NO
 # Insert basic data to database for android
 
 # Download required sources from github
-git clone https://github.com/janghe11/CapstoneDesign_MicroProcessor.git /home/pi/CapstoneDesign_MicroProcessor
+git clone https://github.com/janghe11/Smart_Home_IoT_Test_Bench.git /home/pi/CapstoneDesign_MicroProcessor
 chown -R pi:pi /home/pi/CapstoneDesign_MicroProcessor
 
 # Set apache homepage location from /var/www/html to /home/pi/public_html

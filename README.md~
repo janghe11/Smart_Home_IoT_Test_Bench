@@ -47,7 +47,7 @@
 ####Data transfer protocol information(RPi ↔ AVR)
 ※ All command characters are unsigned char.
 | **Command character**              | **Command name**        | **Available command functions**                                                                                                 |
-| ----------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| ----------------------------------------- | :-------------------------------: | :----------------------------------------------------------------------------------------------------------: |
 | 0 ~ f (0x30 ~ 0x39, 0x61 ~ 0x66) | Screen boiler temperature | rs232_get_command(‘0 ~ f’) / set_rs232_data(‘0 ~ f’)                                                               |
 | g (0x67)                                               | Loosen gas valve                   | rs232_get_command(‘g’)  / stepmotor_spin(‘g’) / set_rs232_data(‘g’)                                  |
 | l (0x6c)                                                 | Lock door                                | rs232_get_command(‘l’) / door_lock_unlock('l') / avr_sound(‘l’) / set_rs232_data(‘l’)      |

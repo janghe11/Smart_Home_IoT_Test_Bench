@@ -54,6 +54,7 @@
 | p (0x70)                                               | 4x4 Keypad is pressed         | avr_sound(‘p’) / set_rs232_data(‘p’)                                                                                                 |
 | u (0x75)                                               | Unlock door                           | rs232_get_command(‘u’) / door_lock_unlock('u') / avr_sound(‘u’) / set_rs232_data(‘u’) |
 | v (0x76)                                                | Fasten gas valve                   | rs232_get_command(‘v’) / stepmotor_spin(‘v’) / set_rs232_data(‘v’)                                      |
+| w (0x77)                                              | Process error                         | set_rs232_data(‘w’)                                                                                                                               |
 
 
 ####ATmega8535 main.c function information (17 functions)

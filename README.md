@@ -5,7 +5,8 @@
 
 - **Project name :** Capstone Design - Micro Processor 
 - **Development period :** 2016Y 03M 02D ~ 2016Y 06M 10D
-- **Development Part :** Jongwoo Jun → LCD, Boiler in AVR / Android App | Taehee Jang → Door lock, Gas valve, sound in AVR / Raspberry Pi
+- **Development Part :** Jongwoo Jun → LCD, Boiler in AVR / Android App
+                                                  Taehee Jang → Door lock, Gas valve, sound in AVR / Raspberry Pi
 
 ##Features
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart_Home_IoT_Test_Bench_Structures.jpg)

@@ -23,20 +23,29 @@
 ###Raspberry Pi2 or 3
 
 ###Android(Since 4.1 Jelly Bean)
-[Video](http:// "Android to Raspberry Pi and cloud instance")
+[Video](https://youtu.be/2daO-WUt2ws?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "Android control AVR via Raspberry Pi")
 
 ##Installation
 **1.** Folk this project to your repository.
 
 **2. AVR ATmega8535 :** Insert CD_ATmega8535.hex file (Location : CD_ATmega8535/Debug/Exe/CD_ATmega8535.hex) to your AVR device.
+
 **3. Raspberry Pi 2 or 3 :** 
+
 **3-1.** Change #define MARIA_CLOUD "Your domain here" to your cloud domain in **avr_daemon.c** 18 line and commit.
+
 **3-2.** Change WiFi SSID and Password as your wish in **install.sh** 97 ~ 98 line and commit.
+
 **3-3.** Change git repository address to yours in **install.sh** 61 line and commit.
+
 **3-4.** Boot raspbian OS and do "sudo raspi-config". Execute "1. Expand file system" and "4. International Option" → Select time zone, Change Localization. Reboot.
-**3-5.** Clone this project in your repository or Copy install.sh by FTP client. And connect USB to RS232-C cable. Execute **"sudo sh install.sh"** [Video](http:// "Raspberry Pi install.sh installation video")
+
+**3-5.** Clone this project in your repository or Copy install.sh by FTP client. And connect USB to RS232-C cable. Execute **"sudo sh install.sh"** [Video](https://youtu.be/mxKGEJyC_fg?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "Raspberry Pi install.sh installation video")
+
 **4. Android :** 
+
 **4-1.** Change Raspberry Pi domain or local IP in **MainActivity.java** 231line .
+
 **4-2.** Build android projects in CD_Android folder and install apk file in your phone.
 
 ##Details

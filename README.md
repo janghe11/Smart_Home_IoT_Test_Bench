@@ -21,6 +21,7 @@
 [Video](https://youtu.be/0xEePp_o0Pk?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Boiler - Temerature control")
 
 ###Raspberry Pi2 or 3
+[Video](https://youtu.be/I_l7a_V6n3E?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "Raspberry Pi control devices and cloud instance")
 
 ###Android(Since 4.1 Jelly Bean)
 [Video](https://youtu.be/2daO-WUt2ws?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "Android control AVR via Raspberry Pi")

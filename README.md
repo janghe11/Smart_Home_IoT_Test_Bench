@@ -5,16 +5,38 @@
 
 - **Project name :** Capstone Design - Micro Processor 
 - **Development period :** 2016Y 03M 02D ~ 2016Y 06M 10D
-- **Development Part :** Jongwoo Jun → LCD, Boiler in AVR / Android App
-                                                  Taehee Jang → Door lock, Gas valve, sound in AVR / Raspberry Pi
+- **Development Part :** Jongwoo Jun → LCD, Boiler in AVR / Android App | Taehee Jang → Door lock, Gas valve, sound in AVR / Raspberry Pi
 
 ##Features
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart_Home_IoT_Test_Bench_Structures.jpg)
+[Video](https://www.youtube.com/watch?v=-Crt2v5ujaE "See system overall")
+
+###AVR ATmega8535
+[Video](http:// "AVR Door lock - Overall")
+[Video](http:// "AVR Door lock - Type password")
+[Video](http:// "AVR Door lock - Unlock")
+[Video](http:// "AVR Door lock - Password fail")
+[Video](http:// "AVR Door lock - Modify password")
+[Video](http:// "AVR Boiler - Overall")
+[Video](http:// "AVR Boiler - Temerature control")
+[Video](http:// "AVR Gas valve - Valve(Step motor) on/off")
+###Raspberry Pi2 or 3
+
+###Android(Since 4.1 Jelly Bean)
+[Video](http:// "Android to Raspberry Pi and cloud instance")
 
 ##Installation
-- **AVR ATmega8535 :** Build CD_ATmega8535/main.c file and burn into your ATmega8535 or use CD_ATmega8535/Debug/Exe/CD_ATmega8535.hex file
-- **Raspberry Pi 2 or 3 :** Execute CD_RaspberryPi2/install.sh in /home/pi/ after expand filesystem and time zone set.(sudo permission and internet connection is needed. Ex) sudo sh install.sh)
-- **Android :** Build android projects in CD_Android folder and install apk file in your phone.
+**1.** Folk this project to your repository.
+**2. AVR ATmega8535 :** Insert CD_ATmega8535.hex file (Location : CD_ATmega8535/Debug/Exe/CD_ATmega8535.hex) to your AVR device.
+**3. Raspberry Pi 2 or 3 :** 
+**3-1.** Change #define MARIA_CLOUD "Your domain here" to your cloud domain in **avr_daemon.c** 18 line and commit.
+**3-2.** Change WiFi SSID and Password as your wish in **install.sh** 97 ~ 98 line and commit.
+**3-3.** Change git repository address to yours in **install.sh** 61 line and commit.
+**3-4.** Boot raspbian OS and do "sudo raspi-config". Execute "1. Expand file system" and "4. International Option" → Select time zone, Change Localization. Reboot.
+**3-5.** Clone this project in your repository or Copy install.sh by FTP client. And connect USB to RS232-C cable. Execute **"sudo sh install.sh"** [Video](http:// "Raspberry Pi install.sh installation video")
+**4. Android :** 
+**4-1.** Change Raspberry Pi domain or local IP in **MainActivity.java** 231line .
+**4-2.** Build android projects in CD_Android folder and install apk file in your phone.
 
 ##Details
 ###Hardware platform and devices
@@ -47,7 +69,7 @@
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/AVR-DDRD.png)
 
 ####Data transfer protocol information(RPi ↔ AVR)
-※ All command characters are unsigned char.
+※ All command characters(input parameters) are unsigned char.
 
 | **Command character**              | **Command name**        | **Available command functions**                                                                                                 |
 | ----------------------------------------- | :-------------------------------: | :----------------------------------------------------------------------------------------------------------: |
@@ -83,8 +105,8 @@
 ####ATmega8535 main.c interrupts information
 
 | **Interrupt name**    | **Description** |
-| ---------------------------- |
-| TIMER1_COMPA_vect |
+| ---------------------------- | --------------------- |
+| TIMER1_COMPA_vect |                                 |
 
 ####Raspberry Pi 2 structures
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart%20Home%20Iot%20Test%20Bench%20Structures%20-%20Raspberry%20Pi.jpg)

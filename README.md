@@ -19,8 +19,8 @@
 [Video](https://youtu.be/LZs_AEyibpg?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Door lock - Unlock")
 If password wrong, clear typing screen and you can type again after sound.
 [Video](https://youtu.be/bH0m9aLebuU?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Door lock - Password fail")
-- **Door lock password modify :** Type password  digit you want to change, and press 'e' button.
-[Video](http:// "AVR Door lock - Modify password")
+- **Door lock password modify :** Type password 4 digits you want to change, and press 'e' button.
+[Video](https://youtu.be/tO4020EM58w "AVR Door lock - Modify password")
 - **Switch X2 → Boiler mode**
 [Video](https://youtu.be/HGOBc7l1QOo?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Boiler - Overall")
 - **Boiler temperature control :** Youcan control boiler temperature from 18 ~ 33 celcius by rotary switch.
@@ -136,6 +136,7 @@ If password wrong, clear typing screen and you can type again after sound.
 | ---------------------------- | --------------------- |
 | TIMER1_COMPA_vect |                                 |
 
+###Raspberry Pi (2 or 3)
 ####Raspberry Pi 2 structures
 ![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Smart%20Home%20Iot%20Test%20Bench%20Structures%20-%20Raspberry%20Pi.jpg)
 
@@ -152,3 +153,15 @@ If password wrong, clear typing screen and you can type again after sound.
 | $andClientId                        | KEY_VALUE                           | Match ID between android and RPi | strcmp($andClientId, $rpiClientId);                | andClientId                    |
 | $andModeGet                     | 1, 2                                          | Set command to RPi whether get database or set command to AVR | 1 → andGetMaria(~); / 2 → rpiAndCommCheck(~); | andModeSet |
 | $andCommGet                   | 0 ~ f, u, l, g, v, o                    | Request specific function of AVR      | avrSetComm($andCommGet, $avrDevId); | andCommSet                |
+
+####mariaDB rpi_avr table structure in and_rpi_avr database
+
+|                       | **cid** | **client_id** | **rpi_id** | **avr_id** | **avr_data** | **rpi_time**                   |
+| -------------- | ---------- | ----------------- | -------------- | -------------- | ------------------ | ------------------------------ |
+| Primary key | Yes         |                            |                       |                       |                             |                                              |
+| Data type    | char        | char                   | char             | char              | char                    | TIMESTAMP                     |
+| Length         | 30           | 30                      | 20                 | 20                 | 1                          |                                             |
+| Basic value  |                |                             |                       |                       |                             | CURRENT_TIMESTAMP |
+| NULL            | NOT NULL                                                                                                                                                       |
+| Encoding    | utf8                                                                                                                                                                   |
+

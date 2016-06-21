@@ -1,6 +1,7 @@
 #Smart Home IoT Test Bench
 
 ##Introduction
+![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Introduction_Overall.jpg)
 **Smart Home IoT Test Bench** is a project light version of MQTT. It is not a kind of MQTT, but made to transfer data easy and visualization like IoT devices.
 
 - **Project name :** Capstone Design - Micro Processor 
@@ -14,20 +15,25 @@
 ###AVR ATmega8535
 [Video](https://youtu.be/FrzMykKj9gg?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Door lock - Overall")
 - **Switch X0 → Door lock mode(You can type password.)**
+![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/AVR_door_password.JPG)
 [Video](https://youtu.be/V3KUylfnduU?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Door lock - Type password")
 - **Door lock password correction check(Initial password is '4567') :** If you type password correct + press 'a' button, Door unlock on screen with sound.
+![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/AVR_door_unlock.JPG)
 [Video](https://youtu.be/LZs_AEyibpg?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Door lock - Unlock")
 If password wrong, clear typing screen and you can type again after sound.
 [Video](https://youtu.be/bH0m9aLebuU?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Door lock - Password fail")
 - **Door lock password modify :** Type password 4 digits you want to change, and press 'e' button.
 [Video](https://youtu.be/tO4020EM58w "AVR Door lock - Modify password")
 - **Switch X2 → Boiler mode**
+![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/AVR_boiler.jpg)
 [Video](https://youtu.be/HGOBc7l1QOo?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Boiler - Overall")
 - **Boiler temperature control :** Youcan control boiler temperature from 18 ~ 33 celcius by rotary switch.
+![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/AVR_boiler_on.JPG)
 [Video](https://youtu.be/0xEePp_o0Pk?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "AVR Boiler - Temerature control")
 - **Switch X1, X3 → Gas valve mode :** X1 loosen gas valve, X3 fasten gas valve. You can watch step motor rotate 180 degree.
 
 ###Raspberry Pi2 or 3
+![alt tag](https://github.com/janghe11/Smart_Home_IoT_Test_Bench/blob/master/Pictures/Android_Raspberry_Cloud.jpg)
 [Video](https://youtu.be/I_l7a_V6n3E?list=PLrkMDS9YPSQGKB-f_zhrBY_vkxBbQ7gf- "Raspberry Pi control devices and cloud instance")
 - **All-in-one installation script(install.sh)**
 - **Auto start on startup**

@@ -15,7 +15,7 @@
 #define CHECKING_TIME 	1000							// Manipulate poll time out.
 
 #define MARIA_HOST		"127.0.0.1"
-#define MARIA_CLOUD		"Your domain here"			// Insert your remote server here. Don't type "http://"
+#define MARIA_CLOUD		"c.thjang.com"			// Insert your remote server here. Don't type "http://"
 #define MARIA_USER		"root"
 #define MARIA_PASS		"raspberry"
 #define MARIA_DATABASE	"and_rpi_avr"
